@@ -1,17 +1,96 @@
+body {
+background-color: #999187;
+    background-image: radial-gradient(#14191d 2px, transparent 2px);
+    background-size: 40px 40px;
+    margin: 0;padding: 0;font-family: sans-serif;height: 100vh;
+    display: flex;flex-direction: column;overflow: hidden;
+}
+
+.desktop {flex: 1; position: relative; padding: 20px;}
+
+.activate-windows {position: absolute; bottom: 40px; right: 40px; color: rgba(246, 227, 206, 0.35); font-family: sans-serif; user-select: none; pointer-events: none; text-align: left; z-index: 1;}
+.activate-title {font-size: 36px; margin: 0 0 5px 0; font-weight: 300;}
+.activate-subtitle {font-size: 16px; margin: 0;}
+
+.window {
+    display: none;
+    position: absolute;
+    top: 10%;left: 10%;
+    background-color: #f6e3ce;
+    color: #14191d;
+    border-radius: 10px;
+    border: 4px outset #f6e3ce;
+    width: 380px;
+    z-index: 10;
+}
+
+.window-iframe {width: 640px;}
+.window-iframe .window-body {padding: 0; align-items: stretch;}
+.window-iframe iframe {width: 100%; height: 420px; border: none; display: block;}
+
+.window-header {background-color: #14191d; color: #f6e3ce; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; cursor: grab;}
+.window-header:active {cursor: grabbing;}
+
+.close-btn {background: #999187; color: #14191d; border: 2px outset #f6e3ce; cursor: pointer; font-weight: bold;}
+
+.window-body {background: #f6e3ce; color: #14191d; border-radius: 5px; border: 1px inset #999187; padding: 20px; display: flex; flex-direction: column; align-items: center;}
+
+.avatar-container {border: 4px inset #999187; background: #14191d; padding: 4px; display: inline-block; margin-bottom: 15px;}
+.avatar-img {display: block; width: 150px; height: 150px; object-fit: cover;}
+
+.profile-label {font-size: 32px; margin: 0 0 20px 0; font-weight: bold; color: #14191d; text-transform: uppercase; letter-spacing: 1px;}
+
+.window-actions {display: flex; flex-direction: column; gap: 10px; width: 100%;}
+
 .btn {
 font-family:sans-serif;
-    display: inline-block;
-    background: #808080;
-    color: #FFFFFF;
-    font-size:32px;
-    padding: 1rem 1.5rem;text-decoration: none;margin: 1%; border-radius: 10px;border: 4px outset white;transition: all 500ms ease;}
-  .window-body {background: #808080; color: white;display: block; text-align: center; font-family:sans-serif;font-size:64px; color: #FFFFFF; border-radius: 5px; border: 1px outset white;}
-  .window {background-color: white; font-family:sans-serif;font-size:32px; color: #808080; text-align: left; border-radius: 10px; border: 4px outset white;}
-  .video {display:inline-block; text-align: center; background: #808080; border: 10px outset white;}
-  .text {font-size:8px; text-align: center; margin: 0%; font-size:40px;}
-  .text1 {font-size:8px; text-align: left; margin: 1%; font-size:32px;}
+    display: block;
+    text-align: center;
+    background: #14191d;
+    color: #f6e3ce;
+    font-size:18px;
+    padding: 10px;text-decoration: none;border-radius: 6px;border: 3px outset #f6e3ce;transition: background 200ms;}
 
 .btn:hover {
-	background: rgba(64,64,64,255);
-        border: 4px inset white;
+	background: #999187;
+        color: #14191d;
+        border: 3px inset #f6e3ce;
 }
+
+.taskbar {position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background-color: #f6e3ce; border-top: 4px outset #f6e3ce; display: flex; align-items: center; padding: 0 10px; box-sizing: border-box; z-index: 100;}
+
+.start-btn {background: #14191d; color: #f6e3ce; font-size: 16px; font-weight: bold; padding: 6px 16px; border: 3px outset #f6e3ce; cursor: pointer;}
+.start-btn:active {border: 3px inset #f6e3ce;}
+
+.taskbar-clock {margin-left: auto; background: #14191d; color: #f6e3ce; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 6px 14px; border: 2px inset #f6e3ce; border-radius: 4px;}
+
+.start-menu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 48px;left: 10px;
+    width: 220px;
+    background: #f6e3ce;
+    border: 4px outset #f6e3ce;
+    border-radius: 8px;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+    overflow: hidden;
+    z-index: 101;
+    opacity: 0;transform: translateY(10px);pointer-events: none;
+    transition: opacity 150ms ease, transform 150ms ease;
+}
+.start-menu.open {opacity: 1; transform: translateY(0); pointer-events: auto;}
+
+.start-menu-header {background: #14191d; color: #f6e3ce; font-weight: bold; font-size: 14px; padding: 8px 12px; letter-spacing: 1px; text-transform: uppercase;}
+
+.start-menu-items {display: flex; flex-direction: column; padding: 6px;}
+
+.start-menu button, .start-menu a {display: block; font-family: sans-serif; text-align: left; background: #f6e3ce; color: #14191d; font-size: 14px; padding: 8px 10px; margin-bottom: 2px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer;}
+.start-menu button:last-child, .start-menu a:last-child {margin-bottom: 0;}
+.start-menu button:hover, .start-menu a:hover {background: #14191d; color: #f6e3ce;}
+
+.start-menu-divider {height: 1px; background: #999187; margin: 4px 6px;}
+
+.parallax-container {position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; pointer-events: none;}
+
+.parallax-layer {position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; object-fit: cover; transform: translate(-50%, -50%) scale(1.1); will-change: transform; pointer-events: none;}
