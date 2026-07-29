@@ -49,12 +49,21 @@ requestAnimationFrame(tickParallax);
 		};
 	}
 
+	function respawnDrop(drop) {
+		if (Math.random() < 0.9) {
+			drop.x = Math.random() * canvas.width;
+			drop.y = -drop.length;
+		} else {
+			drop.x = canvas.width + drop.length;
+			drop.y = Math.random() * canvas.height;
+		}
+	}
+
 	function stepDrop(drop) {
 		drop.y += drop.speed;
 		drop.x -= drop.speed * 0.25;
-		if (drop.y > canvas.height) {
-			drop.y = -drop.length;
-			drop.x = Math.random() * canvas.width;
+		if (drop.y > canvas.height || drop.x < -drop.length) {
+			respawnDrop(drop);
 		}
 	}
 
