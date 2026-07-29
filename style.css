@@ -21,20 +21,35 @@ background-color: #999187;
     border-radius: 10px;
     border: 4px outset #f6e3ce;
     width: 380px;
+    min-width: 260px;
+    min-height: 200px;
     z-index: 10;
     box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+    flex-direction: column;
 }
 
-.window-iframe {width: 640px;}
-.window-iframe .window-body {padding: 0; align-items: stretch;}
-.window-iframe iframe {width: 100%; height: 420px; border: none; display: block;}
+.resize-handle {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 9px;
+    height: 9px;
+    cursor: nwse-resize;
+    background: repeating-linear-gradient(135deg, #14191d 0 1.5px, transparent 1.5px 3px);
+    z-index: 2;
+    touch-action: none;
+}
 
-.window-header {background-color: #14191d; color: #f6e3ce; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; cursor: grab;}
+.window-iframe {width: 640px; height: 480px;}
+.window-iframe .window-body {padding: 0; align-items: stretch;}
+.window-iframe iframe {width: 100%; height: 100%; border: none; display: block; flex: 1;}
+
+.window-header {background-color: #14191d; color: #f6e3ce; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; cursor: grab; touch-action: none;}
 .window-header:active {cursor: grabbing;}
 
 .close-btn {background: #999187; color: #14191d; border: 2px outset #f6e3ce; cursor: pointer; font-weight: bold;}
 
-.window-body {background: #e6d0a8; color: #14191d; border-radius: 5px; border: 1px inset #999187; padding: 20px; display: flex; flex-direction: column; align-items: center;}
+.window-body {background: #e6d0a8; color: #14191d; border-radius: 5px; border: 1px inset #999187; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; overflow: auto;}
 
 .avatar-container {border: 4px inset #999187; background: #14191d; padding: 4px; display: inline-block; margin-bottom: 15px;}
 .avatar-img {display: block; width: 150px; height: 150px; object-fit: cover;}
