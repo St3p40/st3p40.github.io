@@ -22,26 +22,13 @@
 				<p class="activate-subtitle">Please wait idk how long</p>
 			</div>
 
-			<div id="myWindow" class="window">
-				<div class="window-header">
-					<span>St3P40</span>
-					<button class="close-btn" onclick="closeWindow()">X</button>
-				</div>
-				<div class="window-body">
-					<div class="avatar-container">
-						<img src="src/portrait.png" alt="St3P40 Avatar" class="avatar-img">
-					</div>
-					<h1 class="profile-label">St3P40</h1>
-					<h2 class="profile-subtitle">Hello</h2>
-				</div>
-			</div>
 		</div>
 
 		<div class="taskbar">
 			<div id="startMenu" class="start-menu">
 				<div class="start-menu-header">St3P40</div>
 				<div class="start-menu-items">
-					<button onclick="openWindow(); toggleStartMenu();">About Me</button>
+					<button onclick="openIframeWindow('St3P40', 'src/about.html'); toggleStartMenu();">About Me</button>
 					<button onclick="openIframeWindow('BitmapArray Tools', 'https://st3p40.win/BitmapArrayFile/'); toggleStartMenu();">BitmapArray Tools</button>
 					<div class="start-menu-divider"></div>
 					<a href="https://github.com/st3p40" target="_blank">GitHub Page</a>
@@ -52,5 +39,6 @@
 		</div>
 
 		<script src="script.js"></script>
+		<script src="src/background.js"></script>
 	</body>
 </html>
