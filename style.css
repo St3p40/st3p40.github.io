@@ -16,12 +16,13 @@ background-color: #999187;
     display: none;
     position: absolute;
     top: 10%;left: 10%;
-    background-color: #f6e3ce;
+    background-color: #e6d0a8;
     color: #14191d;
     border-radius: 10px;
     border: 4px outset #f6e3ce;
     width: 380px;
     z-index: 10;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
 }
 
 .window-iframe {width: 640px;}
@@ -33,7 +34,7 @@ background-color: #999187;
 
 .close-btn {background: #999187; color: #14191d; border: 2px outset #f6e3ce; cursor: pointer; font-weight: bold;}
 
-.window-body {background: #f6e3ce; color: #14191d; border-radius: 5px; border: 1px inset #999187; padding: 20px; display: flex; flex-direction: column; align-items: center;}
+.window-body {background: #e6d0a8; color: #14191d; border-radius: 5px; border: 1px inset #999187; padding: 20px; display: flex; flex-direction: column; align-items: center;}
 
 .avatar-container {border: 4px inset #999187; background: #14191d; padding: 4px; display: inline-block; margin-bottom: 15px;}
 .avatar-img {display: block; width: 150px; height: 150px; object-fit: cover;}
@@ -57,12 +58,12 @@ font-family:sans-serif;
         border: 3px inset #f6e3ce;
 }
 
-.taskbar {position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background-color: #f6e3ce; border-top: 4px outset #f6e3ce; display: flex; align-items: center; padding: 0 10px; box-sizing: border-box; z-index: 100;}
+.taskbar {position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background-color: #e6d0a8; border: 4px outset #f6e3ce; border-bottom: none; display: flex; align-items: center; padding: 0 10px; box-sizing: border-box; z-index: 100;}
 
 .start-btn {background: #14191d; color: #f6e3ce; font-size: 16px; font-weight: bold; padding: 6px 16px; border: 3px outset #f6e3ce; cursor: pointer;}
 .start-btn:active {border: 3px inset #f6e3ce;}
 
-.taskbar-clock {margin-left: auto; background: #14191d; color: #f6e3ce; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 6px 14px; border: 2px inset #f6e3ce; border-radius: 4px;}
+.taskbar-clock {margin-left: auto; background: #14191d; color: #f6e3ce; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 6px 14px; border: 2px outset #f6e3ce; border-radius: 4px;}
 
 .start-menu {
     display: flex;
@@ -70,7 +71,7 @@ font-family:sans-serif;
     position: absolute;
     bottom: 48px;left: 10px;
     width: 220px;
-    background: #f6e3ce;
+    background: #e6d0a8;
     border: 4px outset #f6e3ce;
     border-radius: 8px;
     box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
@@ -85,7 +86,7 @@ font-family:sans-serif;
 
 .start-menu-items {display: flex; flex-direction: column; padding: 6px;}
 
-.start-menu button, .start-menu a {display: block; font-family: sans-serif; text-align: left; background: #f6e3ce; color: #14191d; font-size: 14px; padding: 8px 10px; margin-bottom: 2px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer;}
+.start-menu button, .start-menu a {display: block; font-family: sans-serif; text-align: left; background: #e6d0a8; color: #14191d; font-size: 14px; padding: 8px 10px; margin-bottom: 2px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer;}
 .start-menu button:last-child, .start-menu a:last-child {margin-bottom: 0;}
 .start-menu button:hover, .start-menu a:hover {background: #14191d; color: #f6e3ce;}
 

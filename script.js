@@ -21,7 +21,9 @@ document.addEventListener('click', function(e) {
 });
 
 function makeDraggable(windowElement) {
-	let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+	let pos3 = 0, pos4 = 0;
+	let curTop = 0, curLeft = 0, maxTop = 0, maxLeft = 0;
+	let rafId = null;
 	const header = windowElement.querySelector('.window-header');
 	header.onmousedown = dragMouseDown;
 	function dragMouseDown(e) {
@@ -29,21 +31,38 @@ function makeDraggable(windowElement) {
 		windowElement.style.zIndex = ++zTop;
 		pos3 = e.clientX;
 		pos4 = e.clientY;
+		curTop = windowElement.offsetTop;
+		curLeft = windowElement.offsetLeft;
+		const taskbarHeight = document.querySelector('.taskbar').offsetHeight;
+		maxTop = Math.max(window.innerHeight - taskbarHeight - windowElement.offsetHeight, 0);
+		maxLeft = Math.max(window.innerWidth - windowElement.offsetWidth, 0);
+		document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = 'none');
 		document.onmouseup = closeDragElement;
 		document.onmousemove = elementDrag;
 	}
 	function elementDrag(e) {
 		e.preventDefault();
-		pos1 = pos3 - e.clientX;
-		pos2 = pos4 - e.clientY;
+		curLeft += e.clientX - pos3;
+		curTop += e.clientY - pos4;
 		pos3 = e.clientX;
 		pos4 = e.clientY;
-		windowElement.style.top = (windowElement.offsetTop - pos2) + "px";
-		windowElement.style.left = (windowElement.offsetLeft - pos1) + "px";
+		if (rafId === null) {
+			rafId = requestAnimationFrame(applyPosition);
+		}
+	}
+	function applyPosition() {
+		rafId = null;
+		windowElement.style.top = Math.min(Math.max(curTop, 0), maxTop) + "px";
+		windowElement.style.left = Math.min(Math.max(curLeft, 0), maxLeft) + "px";
 	}
 	function closeDragElement() {
 		document.onmouseup = null;
 		document.onmousemove = null;
+		document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = '');
+		if (rafId !== null) {
+			cancelAnimationFrame(rafId);
+			rafId = null;
+		}
 	}
 }
 makeDraggable(document.getElementById('myWindow'));
