@@ -25,6 +25,7 @@ function makeDraggable(windowElement) {
 	header.addEventListener('mousedown', dragStart);
 	header.addEventListener('touchstart', dragStart, {passive: false});
 	function dragStart(e) {
+		if (e.target.closest('.close-btn')) return;
 		e.preventDefault();
 		windowElement.style.zIndex = ++zTop;
 		const p = eventPoint(e);
@@ -41,6 +42,7 @@ function makeDraggable(windowElement) {
 		document.addEventListener('mouseup', closeDragElement);
 		document.addEventListener('touchend', closeDragElement);
 		document.addEventListener('touchcancel', closeDragElement);
+		window.addEventListener('blur', closeDragElement);
 	}
 	function elementDrag(e) {
 		e.preventDefault();
@@ -64,6 +66,7 @@ function makeDraggable(windowElement) {
 		document.removeEventListener('mouseup', closeDragElement);
 		document.removeEventListener('touchend', closeDragElement);
 		document.removeEventListener('touchcancel', closeDragElement);
+		window.removeEventListener('blur', closeDragElement);
 		document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = '');
 		if (rafId !== null) {
 			cancelAnimationFrame(rafId);
@@ -98,6 +101,7 @@ function makeResizable(windowElement) {
 		document.addEventListener('mouseup', closeResizeElement);
 		document.addEventListener('touchend', closeResizeElement);
 		document.addEventListener('touchcancel', closeResizeElement);
+		window.addEventListener('blur', closeResizeElement);
 	}
 	function elementResize(e) {
 		e.preventDefault();
@@ -123,6 +127,7 @@ function makeResizable(windowElement) {
 		document.removeEventListener('mouseup', closeResizeElement);
 		document.removeEventListener('touchend', closeResizeElement);
 		document.removeEventListener('touchcancel', closeResizeElement);
+		window.removeEventListener('blur', closeResizeElement);
 		document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = '');
 		if (rafId !== null) {
 			cancelAnimationFrame(rafId);
@@ -141,9 +146,15 @@ function openIframeWindow(title, url) {
 	const win = document.createElement('div');
 	win.className = 'window window-iframe';
 	win.style.display = 'flex';
-	win.style.top = (15 + offset * 4) + '%';
-	win.style.left = (15 + offset * 4) + '%';
 	win.style.zIndex = ++zTop;
+	if (window.matchMedia('(pointer: coarse)').matches) {
+		win.style.top = '8px';
+		win.style.left = '8px';
+		win.style.width = 'calc(100vw - 16px)';
+	} else {
+		win.style.top = (15 + offset * 4) + '%';
+		win.style.left = (15 + offset * 4) + '%';
+	}
 	win.innerHTML = `
 		<div class="window-header">
 			<span>${title}</span>
