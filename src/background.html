@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Background</title>
+		<style>
+			html, body {margin: 0; padding: 0; overflow: hidden; background: transparent;}
+
+			.parallax-container {position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; pointer-events: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none;}
+
+			.parallax-layer {position: absolute; top: 50%; left: 50%; width: 125%; height: 125%; object-fit: cover; transform: translate(-50%, -50%) scale(1.1); will-change: transform; pointer-events: none;}
+
+			.rain-canvas {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;}
+
+			@media (pointer: coarse) {
+				.parallax-layer {width: 100%; height: 100%; object-fit: cover; transform: translate(-50%, -50%) scale(1);}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="parallax-container">
+			<img src="layer1.png" class="parallax-layer" data-depth="0.0" alt="">
+			<img src="layer2.png" class="parallax-layer" data-depth="0.3" alt="">
+			<img src="layer3.png" class="parallax-layer" data-depth="0.5" alt="">
+			<img src="layer4.png" class="parallax-layer" data-depth="1" alt="">
+			<canvas id="rain-canvas" class="rain-canvas"></canvas>
+			<img src="layer5.png" class="parallax-layer" data-depth="3" alt="">
+		</div>
+		<script>
+		(function() {
+			const parallaxMouse = {x: 0, y: 0};
+			const maxMove = 50;
+
+			let parallaxTargetX = 0, parallaxTargetY = 0, centered = true;
+
+			window.addEventListener('message', function(e) {
+				if (!e.data || e.data.type !== 'parallax-state') return;
+				parallaxTargetX = e.data.x;
+				parallaxTargetY = e.data.y;
+				centered = e.data.centered;
+			});
+
+			const parallaxLayers = Array.from(document.querySelectorAll('.parallax-layer')).map(layer => ({
+				el: layer,
+				depth: parseFloat(layer.getAttribute('data-depth'))
+			}));
+
+			function tickParallax() {
+				const ease = 0.12;
+				const targetX = centered ? 0 : parallaxTargetX;
+				const targetY = centered ? 0 : parallaxTargetY;
+				parallaxMouse.x += (targetX - parallaxMouse.x) * ease;
+				parallaxMouse.y += (targetY - parallaxMouse.y) * ease;
+				parallaxLayers.forEach(({el, depth}) => {
+					const moveX = parallaxMouse.x * maxMove * depth;
+					const moveY = parallaxMouse.y * maxMove * depth;
+					el.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px)) scale(1.1)`;
+				});
+				requestAnimationFrame(tickParallax);
+			}
+			requestAnimationFrame(tickParallax);
+
+			const canvas = document.getElementById('rain-canvas');
+			const ctx = canvas.getContext('2d');
+			let drops = [];
+			let width = 0, height = 0;
+
+			function resizeCanvas() {
+				const dpr = window.devicePixelRatio || 1;
+				width = window.innerWidth;
+				height = window.innerHeight;
+				canvas.width = width * dpr;
+				canvas.height = height * dpr;
+				ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+				const dropCount = Math.round((width * height) / 9000);
+				drops = Array.from({length: dropCount}, createDrop);
+			}
+
+			const tierAlphas = [0.18, 0.26, 0.34, 0.4];
+
+			function createDrop() {
+				return {
+					x: Math.random() * width,
+					y: Math.random() * height,
+					length: 32 + Math.random() * 15,
+					speed: 48 + Math.random() * 6,
+					tier: Math.floor(Math.random() * tierAlphas.length)
+				};
+			}
+
+			function respawnDrop(drop) {
+				if (Math.random() < 0.9) {
+					drop.x = Math.random() * width;
+					drop.y = -drop.length;
+				} else {
+					drop.x = width + drop.length;
+					drop.y = Math.random() * height;
+				}
+			}
+
+			function stepDrop(drop) {
+				drop.y += drop.speed;
+				drop.x -= drop.speed * 0.25;
+				if (drop.y > height || drop.x < -drop.length) {
+					respawnDrop(drop);
+				}
+			}
+
+			const rainDepth = 1.2;
+
+			function render() {
+				ctx.clearRect(0, 0, width, height);
+				ctx.save();
+				ctx.translate(parallaxMouse.x * maxMove * rainDepth, parallaxMouse.y * maxMove * rainDepth);
+				ctx.strokeStyle = '#14191d';
+				ctx.lineWidth = 4;
+				const tierPaths = tierAlphas.map(() => new Path2D());
+				drops.forEach(drop => {
+					const path = tierPaths[drop.tier];
+					path.moveTo(drop.x, drop.y);
+					path.lineTo(drop.x + drop.length * 0.25, drop.y - drop.length);
+					stepDrop(drop);
+				});
+				tierPaths.forEach((path, i) => {
+					ctx.globalAlpha = tierAlphas[i];
+					ctx.stroke(path);
+				});
+				ctx.globalAlpha = 1;
+				ctx.restore();
+				requestAnimationFrame(render);
+			}
+
+			window.addEventListener('resize', resizeCanvas);
+			resizeCanvas();
+			requestAnimationFrame(render);
+		})();
+		</script>
+	</body>
+</html>

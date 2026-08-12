@@ -9,14 +9,7 @@
 	</head>
 	<body>
 		<div class="desktop">
-			<div class="parallax-container">
-				<img src="src/layer1.png" class="parallax-layer" data-depth="0.0" alt="">
-				<img src="src/layer2.png" class="parallax-layer" data-depth="0.3" alt="">
-				<img src="src/layer3.png" class="parallax-layer" data-depth="0.5" alt="">
-				<img src="src/layer4.png" class="parallax-layer" data-depth="1" alt="">
-				<canvas id="rain-canvas" class="rain-canvas"></canvas>
-				<img src="src/layer5.png" class="parallax-layer" data-depth="3" alt="">
-			</div>
+			<iframe id="background-frame" class="background-frame" src="src/background.html" aria-hidden="true" tabindex="-1"></iframe>
 
 			<div class="activate-windows">
 				<p class="activate-title">Website is under construction</p>
@@ -40,6 +33,28 @@
 		</div>
 
 		<script src="script.js"></script>
-		<script src="src/background.js"></script>
+		<script>
+			(function() {
+				const backgroundFrame = document.getElementById('background-frame');
+				let lastMouseX = 0, lastMouseY = 0;
+				let mouseInWindow = true;
+
+				function sendParallaxState() {
+					if (!backgroundFrame.contentWindow) return;
+					const centered = hoveredIframes.size > 0 || !mouseInWindow;
+					backgroundFrame.contentWindow.postMessage({type: 'parallax-state', x: lastMouseX, y: lastMouseY, centered}, '*');
+				}
+
+				document.addEventListener('mousemove', function(e) {
+					lastMouseX = (e.clientX / window.innerWidth) - 0.5;
+					lastMouseY = (e.clientY / window.innerHeight) - 0.5;
+					sendParallaxState();
+				});
+				document.documentElement.addEventListener('mouseleave', () => { mouseInWindow = false; sendParallaxState(); });
+				document.documentElement.addEventListener('mouseenter', () => { mouseInWindow = true; sendParallaxState(); });
+				document.addEventListener('iframehoverchange', sendParallaxState);
+				backgroundFrame.addEventListener('load', sendParallaxState);
+			})();
+		</script>
 	</body>
 </html>

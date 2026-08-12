@@ -177,13 +177,20 @@ function closeIframeWindow(url) {
 		hoveredIframes.delete(win.querySelector('iframe'));
 		win.remove();
 		delete openWindows[url];
+		document.dispatchEvent(new Event('iframehoverchange'));
 	}
 }
 
 const hoveredIframes = new Set();
 function watchIframeHover(iframe) {
-	iframe.addEventListener('mouseenter', () => hoveredIframes.add(iframe));
-	iframe.addEventListener('mouseleave', () => hoveredIframes.delete(iframe));
+	iframe.addEventListener('mouseenter', () => {
+		hoveredIframes.add(iframe);
+		document.dispatchEvent(new Event('iframehoverchange'));
+	});
+	iframe.addEventListener('mouseleave', () => {
+		hoveredIframes.delete(iframe);
+		document.dispatchEvent(new Event('iframehoverchange'));
+	});
 }
 
 function updateClock() {

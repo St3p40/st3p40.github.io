@@ -2,16 +2,130 @@
 <html>
 	<head>
 		<title>St3P40</title>
-		<link rel="stylesheet" href="../style.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
-			body {margin: 0; background: #e6d0a8; color: #14191d; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box; padding: 20px;}
+			html {background: #e6d0a8;}
+
+			body {
+				margin: 0;
+				padding: 18px;
+				box-sizing: border-box;
+				background: #e6d0a8;
+				color: #14191d;
+				font-family: sans-serif;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+
+			.page {max-width: 620px; margin: 0 auto;}
+
+			.profile {display: flex; align-items: center; gap: 16px; margin-bottom: 14px;}
+
+			.avatar-container {border: 4px inset #999187; background: #14191d; padding: 4px; flex: none;}
+			.avatar-img {display: block; width: 104px; height: 104px; object-fit: cover;}
+
+			.profile-label {font-size: 28px; margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+			.profile-role {margin: 2px 0 0 0; font-size: 15px;}
+			.profile-meta {margin: 8px 0 0 0; font-family: monospace; font-size: 12px; color: #5c5a52;}
+
+			.panel {background: #f6e3ce; border: 2px inset #999187; margin-bottom: 14px;}
+
+			.panel-title {background: #14191d; color: #f6e3ce; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 6px 10px; margin: 0;}
+
+			.panel-body {padding: 12px;}
+			.panel-body p {margin: 0 0 10px 0;}
+			.panel-body p:last-child {margin-bottom: 0;}
+
+			.link-row {display: flex; align-items: baseline; gap: 10px; padding: 9px 10px; color: #14191d; text-decoration: none; border-bottom: 1px solid rgba(20, 25, 29, 0.15);}
+			.link-row:last-child {border-bottom: none;}
+			.link-row:hover, .link-row:focus {background: #14191d; color: #f6e3ce; outline: none;}
+			.link-name {font-weight: bold; flex: none;}
+			.link-desc {font-size: 12px; opacity: 0.75; margin-left: auto; text-align: right;}
+
+			.tags {display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0;}
+			.tags li {font-family: monospace; font-size: 12px; background: #e6d0a8; border: 2px outset #f6e3ce; padding: 3px 8px;}
+
+			.window-actions {display: flex; flex-wrap: wrap; gap: 10px;}
+
+			.btn {
+				font-family: sans-serif;
+				flex: 1 1 160px;
+				text-align: center;
+				background: #14191d;
+				color: #f6e3ce;
+				font-size: 16px;
+				padding: 10px;
+				text-decoration: none;
+				border-radius: 6px;
+				border: 3px outset #f6e3ce;
+				transition: background 200ms;
+			}
+			.btn:hover {background: #999187; color: #14191d; border: 3px inset #f6e3ce;}
+
+			@media (max-width: 420px) {
+				.profile {flex-direction: column; align-items: flex-start;}
+				.avatar-img {width: 88px; height: 88px;}
+				.profile-label {font-size: 24px;}
+				.link-row {flex-direction: column; gap: 2px;}
+				.link-desc {margin-left: 0; text-align: left;}
+			}
 		</style>
 	</head>
 	<body>
-		<div class="avatar-container">
-			<img src="portrait.png" alt="St3P40 Avatar" class="avatar-img">
+		<div class="page">
+			<div class="profile">
+				<div class="avatar-container">
+					<img src="portrait.png" alt="St3P40 avatar" class="avatar-img">
+				</div>
+				<div>
+					<h1 class="profile-label">St3P40</h1>
+					<p class="profile-role">Developer</p>
+					<!-- <p class="profile-meta"></p> -->
+				</div>
+			</div>
+
+			<div class="panel">
+				<h2 class="panel-title">About</h2>
+				<div class="panel-body">
+					<p>Most of what I write is C and C++ for microcontrollers, Linux</p>
+					<p>Now I'm also exploring web development</p>
+				</div>
+			</div>
+
+			<div class="panel">
+				<h2 class="panel-title">Things I've built</h2>
+				<div class="panel-body" style="padding: 0;">
+										<a class="link-row" href="https://github.com/st3p40/EmbButton" target="_blank" rel="noopener">
+						<span class="link-name">EmbButton</span>
+						<span class="link-desc">Header-only button handling for embedded devices</span>
+					</a>
+					<a class="link-row" href="https://st3p40.win/BitmapArrayFile/" target="_blank" rel="noopener">
+						<span class="link-name">BitmapArray Tools</span>
+						<span class="link-desc">Browser tool for image -> bitmap array conversion</span>
+					</a>
+				</div>
+			</div>
+
+			<div class="panel">
+				<h2 class="panel-title">Toolbox</h2>
+				<div class="panel-body">
+					<ul class="tags">
+						<li>C</li>
+						<li>C++</li>
+						<li>Linux</li>
+						<li>Embedded</li>
+						<li>Arduino</li>
+						<li>ESP32</li>
+						<li>STM32</li>
+						<li>Python</li>
+						<li>HTML/CSS/JS</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="window-actions">
+				<a class="btn" href="https://github.com/st3p40" target="_blank" rel="noopener">GitHub</a>
+			</div>
 		</div>
-		<h1 class="profile-label">St3P40</h1>
-		<h2 class="profile-subtitle">Hello</h2>
 	</body>
 </html>
