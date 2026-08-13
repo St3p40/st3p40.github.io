@@ -34,8 +34,15 @@ background-color: #999187;
 
 .taskbar {position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background-color: #e6d0a8; border: 4px outset #f6e3ce; border-bottom: none; display: flex; align-items: center; padding: 0 10px; box-sizing: border-box; z-index: 100;}
 
-.start-btn {background: #14191d; color: #f6e3ce; font-size: 16px; font-weight: bold; padding: 6px 16px; border: 3px outset #f6e3ce; cursor: pointer;}
+.start-btn {background: #14191d; color: #f6e3ce; font-size: 16px; font-weight: bold; padding: 6px 16px; border: 3px outset #f6e3ce; cursor: pointer; transition: background 120ms ease;}
+.start-btn:hover {background: #2a333b;}
 .start-btn:active {border: 3px inset #f6e3ce;}
+
+.taskbar-windows {display: flex; gap: 6px; margin-left: 10px; overflow-x: auto; min-width: 0;}
+
+.taskbar-window-btn {background: #14191d; color: #f6e3ce; font-family: sans-serif; font-size: 14px; padding: 6px 12px; border: 2px outset #f6e3ce; cursor: pointer; white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; flex: none; transition: background 120ms ease;}
+.taskbar-window-btn:hover {background: #2a333b;}
+.taskbar-window-btn.active {background: #999187; color: #14191d; border: 2px inset #f6e3ce;}
 
 .taskbar-clock {margin-left: auto; background: #14191d; color: #f6e3ce; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 6px 14px; border: 2px inset #f6e3ce; border-radius: 4px;}
 
@@ -46,7 +53,7 @@ background-color: #999187;
 
 .start-menu-items {display: flex; flex-direction: column; padding: 6px;}
 
-.start-menu button, .start-menu a {display: block; font-family: sans-serif; text-align: left; background: #e6d0a8; color: #14191d; font-size: 14px; padding: 8px 10px; margin-bottom: 2px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer;}
+.start-menu button, .start-menu a {display: block; font-family: sans-serif; text-align: left; background: #e6d0a8; color: #14191d; font-size: 14px; padding: 8px 10px; margin-bottom: 2px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer; transition: background 120ms ease, color 120ms ease;}
 .start-menu button:last-child, .start-menu a:last-child {margin-bottom: 0;}
 .start-menu button:hover, .start-menu a:hover {background: #14191d; color: #f6e3ce;}
 

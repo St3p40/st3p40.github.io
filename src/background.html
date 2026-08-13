@@ -14,16 +14,20 @@
 			@media (pointer: coarse) {
 				.parallax-layer {width: 100%; height: 100%; object-fit: cover; transform: translate(-50%, -50%) scale(1);}
 			}
+
+			@media (max-width: 700px) and (orientation: portrait) {
+				.parallax-layer[data-depth="3"] {display: none;}
+			}
 		</style>
 	</head>
 	<body>
 		<div class="parallax-container">
 			<img src="layer1.png" class="parallax-layer" data-depth="0.0" alt="">
-			<img src="layer2.png" class="parallax-layer" data-depth="0.3" alt="">
-			<img src="layer3.png" class="parallax-layer" data-depth="0.5" alt="">
-			<img src="layer4.png" class="parallax-layer" data-depth="1" alt="">
+			<img src="layer2.png" class="parallax-layer" data-depth="0.25" alt="">
+			<img src="layer3.png" class="parallax-layer" data-depth="0.75" alt="">
+			<img src="layer4.png" class="parallax-layer" data-depth="2.5" alt="">
 			<canvas id="rain-canvas" class="rain-canvas"></canvas>
-			<img src="layer5.png" class="parallax-layer" data-depth="3" alt="">
+			<img src="layer5.png" class="parallax-layer" data-depth="5" alt="">
 		</div>
 		<script>
 		(function() {

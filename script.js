@@ -1,5 +1,12 @@
 let zTop = 10;
 const openWindows = {};
+const taskbarButtons = {};
+let activeWindowUrl = null;
+
+function setActiveWindow(url) {
+	activeWindowUrl = url;
+	Object.entries(taskbarButtons).forEach(([u, btn]) => btn.classList.toggle('active', u === url));
+}
 
 function toggleStartMenu() {
 	document.getElementById('startMenu').classList.toggle('open');
@@ -28,6 +35,7 @@ function makeDraggable(windowElement) {
 		if (e.target.closest('.close-btn')) return;
 		e.preventDefault();
 		windowElement.style.zIndex = ++zTop;
+		if (windowElement.dataset.url) setActiveWindow(windowElement.dataset.url);
 		const p = eventPoint(e);
 		pos3 = p.x;
 		pos4 = p.y;
@@ -86,6 +94,7 @@ function makeResizable(windowElement) {
 		e.preventDefault();
 		e.stopPropagation();
 		windowElement.style.zIndex = ++zTop;
+		if (windowElement.dataset.url) setActiveWindow(windowElement.dataset.url);
 		const p = eventPoint(e);
 		startX = p.x;
 		startY = p.y;
@@ -140,6 +149,7 @@ function openIframeWindow(title, url) {
 	if (openWindows[url]) {
 		openWindows[url].style.display = 'flex';
 		openWindows[url].style.zIndex = ++zTop;
+		setActiveWindow(url);
 		return;
 	}
 	const offset = Object.keys(openWindows).length % 5;
@@ -147,6 +157,7 @@ function openIframeWindow(title, url) {
 	win.className = 'window window-iframe';
 	win.style.display = 'flex';
 	win.style.zIndex = ++zTop;
+	win.dataset.url = url;
 	if (window.matchMedia('(pointer: coarse)').matches) {
 		win.style.top = '8px';
 		win.style.left = '8px';
@@ -169,6 +180,27 @@ function openIframeWindow(title, url) {
 	makeResizable(win);
 	watchIframeHover(win.querySelector('iframe'));
 	openWindows[url] = win;
+
+	const btn = document.createElement('button');
+	btn.className = 'taskbar-window-btn';
+	btn.textContent = title;
+	btn.onclick = () => toggleTaskbarWindow(url);
+	document.getElementById('taskbarWindows').appendChild(btn);
+	taskbarButtons[url] = btn;
+	setActiveWindow(url);
+}
+
+function toggleTaskbarWindow(url) {
+	const win = openWindows[url];
+	if (!win) return;
+	if (win.style.display !== 'none' && activeWindowUrl === url) {
+		win.style.display = 'none';
+		setActiveWindow(null);
+	} else {
+		win.style.display = 'flex';
+		win.style.zIndex = ++zTop;
+		setActiveWindow(url);
+	}
 }
 
 function closeIframeWindow(url) {
@@ -176,6 +208,11 @@ function closeIframeWindow(url) {
 	if (win) {
 		hoveredIframes.delete(win.querySelector('iframe'));
 		win.remove();
+		if (taskbarButtons[url]) {
+			taskbarButtons[url].remove();
+			delete taskbarButtons[url];
+		}
+		if (activeWindowUrl === url) setActiveWindow(null);
 		delete openWindows[url];
 		document.dispatchEvent(new Event('iframehoverchange'));
 	}
