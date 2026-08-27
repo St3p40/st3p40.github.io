@@ -6,6 +6,12 @@
 		<link rel="icon" href="src/favico.ico">
 		<link rel="stylesheet" href="style.css">
 		<style>body { background-color: #000;}</style>
+		<script>
+			try {
+				const savedTheme = localStorage.getItem('theme');
+				if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
+			} catch (e) {}
+		</script>
 	</head>
 	<body>
 		<div class="desktop">
@@ -26,13 +32,13 @@
 					<button onclick="openIframeWindow('BitmapArray Tools', 'https://st3p40.win/BitmapArrayFile/'); toggleStartMenu();">BitmapArray Tools</button>
 					<button onclick="openIframeWindow('LED Matrix demos', 'https://st3p40.win/Works-from-Soulmatelights/'); toggleStartMenu();">LED Matrix demos</button>
 					<div class="start-menu-divider"></div>
-					<div class="start-menu-divider"></div>
 					<a href="https://github.com/st3p40" target="_blank">GitHub Page</a>
 				</div>
 			</div>
 			<button class="start-btn" onclick="toggleStartMenu()">Start</button>
 			<div id="taskbarWindows" class="taskbar-windows"></div>
 			<div id="taskbarClock" class="taskbar-clock" title="Newfoundland time"></div>
+			<button id="themeBtn" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme"></button>
 		</div>
 
 		<script src="script.js"></script>

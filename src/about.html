@@ -4,14 +4,61 @@
 		<title>St3P40</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
-			html {background: #e6d0a8;}
+			:root {
+				color-scheme: light;
+				--surface: #e6d0a8;
+				--panel: #f6e3ce;
+				--text: #14191d;
+				--text-dim: #5c5a52;
+				--chrome: #14191d;
+				--chrome-text: #f6e3ce;
+				--edge: #f6e3ce;
+				--edge-dim: #999187;
+				--muted: #999187;
+				--on-muted: #14191d;
+				--rule: rgba(20, 25, 29, 0.15);
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) {
+					color-scheme: dark;
+					--surface: #262c32;
+					--panel: #2f363d;
+					--text: #e6d0a8;
+					--text-dim: #9a9384;
+					--chrome: #12171b;
+					--chrome-text: #e6d0a8;
+					--edge: #4b555e;
+					--edge-dim: #12171b;
+					--muted: #6f6a5f;
+					--on-muted: #14191d;
+					--rule: rgba(230, 208, 168, 0.15);
+				}
+			}
+
+			:root[data-theme="dark"] {
+				color-scheme: dark;
+				--surface: #262c32;
+				--panel: #2f363d;
+				--text: #e6d0a8;
+				--text-dim: #9a9384;
+				--chrome: #12171b;
+				--chrome-text: #e6d0a8;
+				--edge: #4b555e;
+				--edge-dim: #12171b;
+				--muted: #6f6a5f;
+				--on-muted: #14191d;
+				--rule: rgba(230, 208, 168, 0.15);
+			}
+
+			html {background: var(--surface);}
 
 			body {
 				margin: 0;
 				padding: 18px;
 				box-sizing: border-box;
-				background: #e6d0a8;
-				color: #14191d;
+				background: var(--surface);
+				color: var(--text);
 				font-family: sans-serif;
 				font-size: 14px;
 				line-height: 1.5;
@@ -21,29 +68,29 @@
 
 			.profile {display: flex; align-items: center; gap: 16px; margin-bottom: 14px;}
 
-			.avatar-container {border: 4px inset #999187; background: #14191d; padding: 4px; flex: none;}
+			.avatar-container {border: 4px inset var(--edge-dim); background: var(--chrome); padding: 4px; flex: none;}
 			.avatar-img {display: block; width: 104px; height: 104px; object-fit: cover;}
 
 			.profile-label {font-size: 28px; margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
 			.profile-role {margin: 2px 0 0 0; font-size: 15px;}
-			.profile-meta {margin: 8px 0 0 0; font-family: monospace; font-size: 12px; color: #5c5a52;}
+			.profile-meta {margin: 8px 0 0 0; font-family: monospace; font-size: 12px; color: var(--text-dim);}
 
-			.panel {background: #f6e3ce; border: 2px inset #999187; margin-bottom: 14px;}
+			.panel {background: var(--panel); border: 2px inset var(--edge-dim); margin-bottom: 14px;}
 
-			.panel-title {background: #14191d; color: #f6e3ce; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 6px 10px; margin: 0;}
+			.panel-title {background: var(--chrome); color: var(--chrome-text); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 6px 10px; margin: 0;}
 
 			.panel-body {padding: 12px;}
 			.panel-body p {margin: 0 0 10px 0;}
 			.panel-body p:last-child {margin-bottom: 0;}
 
-			.link-row {display: flex; align-items: baseline; gap: 10px; padding: 9px 10px; color: #14191d; text-decoration: none; border-bottom: 1px solid rgba(20, 25, 29, 0.15);}
+			.link-row {display: flex; align-items: baseline; gap: 10px; padding: 9px 10px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--rule);}
 			.link-row:last-child {border-bottom: none;}
-			.link-row:hover, .link-row:focus {background: #14191d; color: #f6e3ce; outline: none;}
+			.link-row:hover, .link-row:focus {background: var(--chrome); color: var(--chrome-text); outline: none;}
 			.link-name {font-weight: bold; flex: none;}
 			.link-desc {font-size: 12px; opacity: 0.75; margin-left: auto; text-align: right;}
 
 			.tags {display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0;}
-			.tags li {font-family: monospace; font-size: 12px; background: #e6d0a8; border: 2px outset #f6e3ce; padding: 3px 8px;}
+			.tags li {font-family: monospace; font-size: 12px; background: var(--surface); border: 2px outset var(--edge); padding: 3px 8px;}
 
 			.window-actions {display: flex; flex-wrap: wrap; gap: 10px;}
 
@@ -51,16 +98,16 @@
 				font-family: sans-serif;
 				flex: 1 1 160px;
 				text-align: center;
-				background: #14191d;
-				color: #f6e3ce;
+				background: var(--chrome);
+				color: var(--chrome-text);
 				font-size: 16px;
 				padding: 10px;
 				text-decoration: none;
 				border-radius: 6px;
-				border: 3px outset #f6e3ce;
+				border: 3px outset var(--edge);
 				transition: background 200ms;
 			}
-			.btn:hover {background: #999187; color: #14191d; border: 3px inset #f6e3ce;}
+			.btn:hover {background: var(--muted); color: var(--on-muted); border: 3px inset var(--edge);}
 
 			@media (max-width: 420px) {
 				.profile {flex-direction: column; align-items: flex-start;}
@@ -127,5 +174,11 @@
 				<a class="btn" href="https://github.com/st3p40" target="_blank" rel="noopener">GitHub</a>
 			</div>
 		</div>
+		<script>
+			window.addEventListener('message', function(e) {
+				if (!e.data || e.data.type !== 'theme') return;
+				if (e.data.theme === 'dark' || e.data.theme === 'light') document.documentElement.dataset.theme = e.data.theme;
+			});
+		</script>
 	</body>
 </html>

@@ -179,6 +179,7 @@ function openIframeWindow(title, url) {
 	makeDraggable(win);
 	makeResizable(win);
 	watchIframeHover(win.querySelector('iframe'));
+	sendThemeTo(win.querySelector('iframe'));
 	openWindows[url] = win;
 
 	const btn = document.createElement('button');
@@ -236,3 +237,58 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 1000);
+
+const THEME_KEY = 'theme';
+const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+function storedTheme() {
+	try {
+		return localStorage.getItem(THEME_KEY);
+	} catch (e) {
+		return null;
+	}
+}
+
+function currentTheme() {
+	return document.documentElement.dataset.theme || (darkQuery.matches ? 'dark' : 'light');
+}
+
+function updateThemeButton(theme) {
+	const btn = document.getElementById('themeBtn');
+	if (!btn) return;
+	btn.textContent = theme === 'dark' ? '\u2600' : '\u263E';
+	btn.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+}
+
+function sendThemeTo(frame) {
+	if (!frame) return;
+	frame.addEventListener('load', function() {
+		if (frame.contentWindow) frame.contentWindow.postMessage({type: 'theme', theme: currentTheme()}, '*');
+	});
+}
+
+function broadcastTheme() {
+	const theme = currentTheme();
+	Object.values(openWindows).forEach(function(win) {
+		const frame = win.querySelector('iframe');
+		if (frame && frame.contentWindow) frame.contentWindow.postMessage({type: 'theme', theme}, '*');
+	});
+}
+
+function toggleTheme() {
+	const theme = currentTheme() === 'dark' ? 'light' : 'dark';
+	document.documentElement.dataset.theme = theme;
+	try {
+		localStorage.setItem(THEME_KEY, theme);
+	} catch (e) {}
+	updateThemeButton(theme);
+	broadcastTheme();
+}
+
+darkQuery.addEventListener('change', function() {
+	if (storedTheme()) return;
+	updateThemeButton(currentTheme());
+	broadcastTheme();
+});
+
+updateThemeButton(currentTheme());
