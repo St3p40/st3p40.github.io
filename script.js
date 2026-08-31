@@ -269,8 +269,9 @@ function sendThemeTo(frame) {
 
 function broadcastTheme() {
 	const theme = currentTheme();
-	Object.values(openWindows).forEach(function(win) {
-		const frame = win.querySelector('iframe');
+	const frames = Object.values(openWindows).map(win => win.querySelector('iframe'));
+	frames.push(document.getElementById('background-frame'));
+	frames.forEach(function(frame) {
 		if (frame && frame.contentWindow) frame.contentWindow.postMessage({type: 'theme', theme}, '*');
 	});
 }

@@ -2,14 +2,30 @@
 <html>
 	<head>
 		<title>Background</title>
+		<script>
+			try {
+				const savedTheme = localStorage.getItem('theme');
+				if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
+			} catch (e) {}
+		</script>
 		<style>
+			:root {--layer-grade: none; --veil: transparent; --rain-ink: #14191d;}
+
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) {--layer-grade: brightness(0.6) saturate(0.75) contrast(1.05); --veil: rgba(13, 27, 42, 0.35); --rain-ink: #e6d0a8;}
+			}
+
+			:root[data-theme="dark"] {--layer-grade: brightness(0.6) saturate(0.75) contrast(1.05); --veil: rgba(13, 27, 42, 0.35); --rain-ink: #e6d0a8;}
+
 			html, body {margin: 0; padding: 0; overflow: hidden; background: transparent;}
 
 			.parallax-container {position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; pointer-events: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none;}
 
-			.parallax-layer {position: absolute; top: 50%; left: 50%; width: 125%; height: 125%; object-fit: cover; transform: translate(-50%, -50%) scale(1.1); will-change: transform; pointer-events: none;}
+			.parallax-layer {filter: var(--layer-grade); position: absolute; top: 50%; left: 50%; width: 125%; height: 125%; object-fit: cover; transform: translate(-50%, -50%) scale(1.1); will-change: transform; pointer-events: none;}
 
 			.rain-canvas {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;}
+
+			.night-veil {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; background: var(--veil); pointer-events: none; transition: background 200ms;}
 
 			@media (pointer: coarse) {
 				.parallax-layer {width: 100%; height: 100%; object-fit: cover; transform: translate(-50%, -50%) scale(1);}
@@ -28,6 +44,7 @@
 			<img src="layer4.png" class="parallax-layer" data-depth="2.5" alt="">
 			<canvas id="rain-canvas" class="rain-canvas"></canvas>
 			<img src="layer5.png" class="parallax-layer" data-depth="5" alt="">
+			<div class="night-veil"></div>
 		</div>
 		<script>
 		(function() {
@@ -35,6 +52,20 @@
 			const maxMove = 50;
 
 			let parallaxTargetX = 0, parallaxTargetY = 0, centered = true;
+
+			let rainInk = '#14191d';
+
+			function readRainInk() {
+				const ink = getComputedStyle(document.documentElement).getPropertyValue('--rain-ink').trim();
+				if (ink) rainInk = ink;
+			}
+			readRainInk();
+
+			window.addEventListener('message', function(e) {
+				if (!e.data || e.data.type !== 'theme') return;
+				if (e.data.theme === 'dark' || e.data.theme === 'light') document.documentElement.dataset.theme = e.data.theme;
+				readRainInk();
+			});
 
 			window.addEventListener('message', function(e) {
 				if (!e.data || e.data.type !== 'parallax-state') return;
@@ -115,7 +146,7 @@
 				ctx.clearRect(0, 0, width, height);
 				ctx.save();
 				ctx.translate(parallaxMouse.x * maxMove * rainDepth, parallaxMouse.y * maxMove * rainDepth);
-				ctx.strokeStyle = '#14191d';
+				ctx.strokeStyle = rainInk;
 				ctx.lineWidth = 4;
 				const tierPaths = tierAlphas.map(() => new Path2D());
 				drops.forEach(drop => {
