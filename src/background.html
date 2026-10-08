@@ -38,20 +38,22 @@
 	</head>
 	<body>
 		<div class="parallax-container">
-			<img src="layer1.png" class="parallax-layer" data-depth="0.0" alt="">
-			<img src="layer2.png" class="parallax-layer" data-depth="0.25" alt="">
-			<img src="layer3.png" class="parallax-layer" data-depth="0.75" alt="">
-			<img src="layer4.png" class="parallax-layer" data-depth="2.5" alt="">
+			<img src="layer1.png" class="parallax-layer" data-depth="0.0" alt="" decoding="async">
+			<img src="layer2.png" class="parallax-layer" data-depth="0.25" alt="" decoding="async">
+			<img src="layer3.png" class="parallax-layer" data-depth="0.75" alt="" decoding="async">
+			<img src="layer4.png" class="parallax-layer" data-depth="2.5" alt="" decoding="async">
 			<canvas id="rain-canvas" class="rain-canvas"></canvas>
-			<img src="layer5.png" class="parallax-layer" data-depth="5" alt="">
+			<img src="layer5.png" class="parallax-layer" data-depth="5" alt="" decoding="async">
 			<div class="night-veil"></div>
 		</div>
 		<script>
 		(function() {
 			const parallaxMouse = {x: 0, y: 0};
 			const maxMove = 50;
+			const frameMs = 1000 / 144;
 
 			let parallaxTargetX = 0, parallaxTargetY = 0, centered = true;
+			let appliedX = NaN, appliedY = NaN;
 
 			let rainInk = '#14191d';
 
@@ -62,16 +64,16 @@
 			readRainInk();
 
 			window.addEventListener('message', function(e) {
-				if (!e.data || e.data.type !== 'theme') return;
-				if (e.data.theme === 'dark' || e.data.theme === 'light') document.documentElement.dataset.theme = e.data.theme;
-				readRainInk();
-			});
-
-			window.addEventListener('message', function(e) {
-				if (!e.data || e.data.type !== 'parallax-state') return;
-				parallaxTargetX = e.data.x;
-				parallaxTargetY = e.data.y;
-				centered = e.data.centered;
+				const data = e.data;
+				if (!data) return;
+				if (data.type === 'theme') {
+					if (data.theme === 'dark' || data.theme === 'light') document.documentElement.dataset.theme = data.theme;
+					readRainInk();
+				} else if (data.type === 'parallax-state') {
+					parallaxTargetX = data.x;
+					parallaxTargetY = data.y;
+					centered = data.centered;
+				}
 			});
 
 			const parallaxLayers = Array.from(document.querySelectorAll('.parallax-layer')).map(layer => ({
@@ -79,20 +81,28 @@
 				depth: parseFloat(layer.getAttribute('data-depth'))
 			}));
 
-			function tickParallax() {
-				const ease = 0.12;
-				const targetX = centered ? 0 : parallaxTargetX;
-				const targetY = centered ? 0 : parallaxTargetY;
-				parallaxMouse.x += (targetX - parallaxMouse.x) * ease;
-				parallaxMouse.y += (targetY - parallaxMouse.y) * ease;
+			function applyParallax() {
+				if (parallaxMouse.x === appliedX && parallaxMouse.y === appliedY) return;
+				appliedX = parallaxMouse.x;
+				appliedY = parallaxMouse.y;
 				parallaxLayers.forEach(({el, depth}) => {
 					const moveX = parallaxMouse.x * maxMove * depth;
 					const moveY = parallaxMouse.y * maxMove * depth;
 					el.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px)) scale(1.1)`;
 				});
-				requestAnimationFrame(tickParallax);
 			}
-			requestAnimationFrame(tickParallax);
+
+			function easeToward(current, target, ease) {
+				const next = current + (target - current) * ease;
+				return Math.abs(target - next) < 0.0005 ? target : next;
+			}
+
+			function tickParallax(dt) {
+				const ease = 1 - Math.pow(1 - 0.12, dt);
+				parallaxMouse.x = easeToward(parallaxMouse.x, centered ? 0 : parallaxTargetX, ease);
+				parallaxMouse.y = easeToward(parallaxMouse.y, centered ? 0 : parallaxTargetY, ease);
+				applyParallax();
+			}
 
 			const canvas = document.getElementById('rain-canvas');
 			const ctx = canvas.getContext('2d');
@@ -100,12 +110,10 @@
 			let width = 0, height = 0;
 
 			function resizeCanvas() {
-				const dpr = window.devicePixelRatio || 1;
 				width = window.innerWidth;
 				height = window.innerHeight;
-				canvas.width = width * dpr;
-				canvas.height = height * dpr;
-				ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+				canvas.width = width;
+				canvas.height = height;
 				const dropCount = Math.round((width * height) / 9000);
 				drops = Array.from({length: dropCount}, createDrop);
 			}
@@ -132,9 +140,9 @@
 				}
 			}
 
-			function stepDrop(drop) {
-				drop.y += drop.speed;
-				drop.x -= drop.speed * 0.25;
+			function stepDrop(drop, dt) {
+				drop.y += drop.speed * dt;
+				drop.x -= drop.speed * 0.25 * dt;
 				if (drop.y > height || drop.x < -drop.length) {
 					respawnDrop(drop);
 				}
@@ -142,7 +150,7 @@
 
 			const rainDepth = 1.2;
 
-			function render() {
+			function renderRain(dt) {
 				ctx.clearRect(0, 0, width, height);
 				ctx.save();
 				ctx.translate(parallaxMouse.x * maxMove * rainDepth, parallaxMouse.y * maxMove * rainDepth);
@@ -153,7 +161,7 @@
 					const path = tierPaths[drop.tier];
 					path.moveTo(drop.x, drop.y);
 					path.lineTo(drop.x + drop.length * 0.25, drop.y - drop.length);
-					stepDrop(drop);
+					stepDrop(drop, dt);
 				});
 				tierPaths.forEach((path, i) => {
 					ctx.globalAlpha = tierAlphas[i];
@@ -161,12 +169,43 @@
 				});
 				ctx.globalAlpha = 1;
 				ctx.restore();
-				requestAnimationFrame(render);
 			}
 
-			window.addEventListener('resize', resizeCanvas);
+			let rafId = null, lastTime = 0;
+
+			function frame(now) {
+				rafId = requestAnimationFrame(frame);
+				const dt = Math.min((now - lastTime) / frameMs, 3);
+				lastTime = now;
+				tickParallax(dt);
+				renderRain(dt);
+			}
+
+			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+			function syncMotion() {
+				if (reducedMotion.matches) {
+					if (rafId !== null) cancelAnimationFrame(rafId);
+					rafId = null;
+					ctx.clearRect(0, 0, width, height);
+					parallaxMouse.x = 0;
+					parallaxMouse.y = 0;
+					applyParallax();
+				} else if (rafId === null) {
+					lastTime = performance.now();
+					rafId = requestAnimationFrame(frame);
+				}
+			}
+
+			let resizeTimer = null;
+			window.addEventListener('resize', function() {
+				clearTimeout(resizeTimer);
+				resizeTimer = setTimeout(resizeCanvas, 100);
+			});
+			reducedMotion.addEventListener('change', syncMotion);
+
 			resizeCanvas();
-			requestAnimationFrame(render);
+			syncMotion();
 		})();
 		</script>
 	</body>

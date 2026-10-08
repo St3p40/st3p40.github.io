@@ -166,15 +166,26 @@ function openIframeWindow(title, url) {
 		win.style.top = (15 + offset * 4) + '%';
 		win.style.left = (15 + offset * 4) + '%';
 	}
-	win.innerHTML = `
-		<div class="window-header">
-			<span>${title}</span>
-			<button class="close-btn" onclick="closeIframeWindow('${url}')">X</button>
-		</div>
-		<div class="window-body">
-			<iframe src="${url}"></iframe>
-		</div>
-	`;
+	const header = document.createElement('div');
+	header.className = 'window-header';
+
+	const titleSpan = document.createElement('span');
+	titleSpan.textContent = title;
+
+	const closeBtn = document.createElement('button');
+	closeBtn.className = 'close-btn';
+	closeBtn.textContent = 'X';
+	closeBtn.addEventListener('click', () => closeIframeWindow(url));
+
+	header.append(titleSpan, closeBtn);
+
+	const body = document.createElement('div');
+	body.className = 'window-body';
+	const iframe = document.createElement('iframe');
+	iframe.src = url;
+	body.append(iframe);
+
+	win.append(header, body);
 	document.querySelector('.desktop').appendChild(win);
 	makeDraggable(win);
 	makeResizable(win);
