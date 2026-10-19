@@ -19,6 +19,10 @@ document.addEventListener('click', function(e) {
 	}
 });
 
+document.querySelectorAll('.desktop-icon[data-url]').forEach(icon => {
+	icon.addEventListener('click', () => openIframeWindow(icon.dataset.title, icon.dataset.url));
+});
+
 function eventPoint(e) {
 	const t = e.touches && e.touches[0] || e.changedTouches && e.changedTouches[0];
 	return t ? {x: t.clientX, y: t.clientY} : {x: e.clientX, y: e.clientY};
@@ -267,8 +271,7 @@ function currentTheme() {
 function updateThemeButton(theme) {
 	const btn = document.getElementById('themeBtn');
 	if (!btn) return;
-	btn.textContent = theme === 'dark' ? '\u2600' : '\u263E';
-	btn.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+	btn.textContent = theme === 'dark' ? '\u2600 Switch to light theme' : '\u263E Switch to dark theme';
 }
 
 function sendThemeTo(frame) {
@@ -304,3 +307,42 @@ darkQuery.addEventListener('change', function() {
 });
 
 updateThemeButton(currentTheme());
+
+const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+const EFFECTS = ['rain', 'parallax'];
+const EFFECT_LABELS = {rain: 'Rain', parallax: 'Parallax'};
+
+function effectEnabled(name) {
+	let stored = null;
+	try {
+		stored = localStorage.getItem(name);
+	} catch (e) {}
+	return stored ? stored === 'on' : !motionQuery.matches;
+}
+
+function updateEffectButtons() {
+	EFFECTS.forEach(name => {
+		document.getElementById(name + 'Btn').textContent = EFFECT_LABELS[name] + ': ' + (effectEnabled(name) ? 'on' : 'off');
+	});
+}
+
+function toggleEffect(name) {
+	const enabled = !effectEnabled(name);
+	try {
+		localStorage.setItem(name, enabled ? 'on' : 'off');
+	} catch (e) {}
+	updateEffectButtons();
+	const frame = document.getElementById('background-frame');
+	if (frame && frame.contentWindow) frame.contentWindow.postMessage({type: 'effect', name, enabled}, '*');
+}
+
+updateEffectButtons();
+
+function closeStartMenu() {
+	document.getElementById('startMenu').classList.remove('open');
+}
+
+function closeAllWindows() {
+	Object.keys(openWindows).forEach(closeIframeWindow);
+	closeStartMenu();
+}

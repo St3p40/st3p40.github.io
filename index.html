@@ -18,6 +18,25 @@
 		<div class="desktop">
 			<iframe id="background-frame" class="background-frame" src="src/background.html" aria-hidden="true" tabindex="-1"></iframe>
 
+			<nav class="desktop-icons" aria-label="Desktop">
+				<button class="desktop-icon" data-title="St3P40" data-url="src/about.html">
+					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg></span>
+					<span class="desktop-icon-label">About Me</span>
+				</button>
+				<button class="desktop-icon" data-title="BitmapArray Tools" data-url="https://st3p40.win/BitmapArrayFile/">
+					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h6v6H3zM15 3h6v6h-6zM9 9h6v6H9zM3 15h6v6H3zM15 15h6v6h-6z"/></svg></span>
+					<span class="desktop-icon-label">BitmapArray Tools</span>
+				</button>
+				<button class="desktop-icon" data-title="LED Matrix demos" data-url="https://st3p40.win/Works-from-Soulmatelights/">
+					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="12" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="12" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/></svg></span>
+					<span class="desktop-icon-label">LED Matrix demos</span>
+				</button>
+				<a class="desktop-icon" href="https://github.com/st3p40" target="_blank" rel="noopener">
+					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14zM5 5h6v2H5v12h12v-6h2v8H3V5z"/></svg></span>
+					<span class="desktop-icon-label">GitHub Page</span>
+				</a>
+			</nav>
+
 			<div class="activate-windows">
 				<p class="activate-title">Website is under construction</p>
 				<p class="activate-subtitle">Please wait idk how long</p>
@@ -29,17 +48,16 @@
 			<div id="startMenu" class="start-menu">
 				<div class="start-menu-header">St3P40</div>
 				<div class="start-menu-items">
-					<button onclick="openIframeWindow('St3P40', 'src/about.html'); toggleStartMenu();">About Me</button>
-					<button onclick="openIframeWindow('BitmapArray Tools', 'https://st3p40.win/BitmapArrayFile/'); toggleStartMenu();">BitmapArray Tools</button>
-					<button onclick="openIframeWindow('LED Matrix demos', 'https://st3p40.win/Works-from-Soulmatelights/'); toggleStartMenu();">LED Matrix demos</button>
+					<button id="themeBtn" onclick="toggleTheme()"></button>
+					<button id="rainBtn" onclick="toggleEffect('rain')"></button>
+					<button id="parallaxBtn" onclick="toggleEffect('parallax')"></button>
 					<div class="start-menu-divider"></div>
-					<a href="https://github.com/st3p40" target="_blank">GitHub Page</a>
+					<button onclick="closeAllWindows()">Close all windows</button>
 				</div>
 			</div>
 			<button class="start-btn" onclick="toggleStartMenu()">Start</button>
 			<div id="taskbarWindows" class="taskbar-windows"></div>
 			<div id="taskbarClock" class="taskbar-clock" title="Newfoundland time"></div>
-			<button id="themeBtn" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme"></button>
 		</div>
 
 		<script src="script.js"></script>

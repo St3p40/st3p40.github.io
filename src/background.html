@@ -69,6 +69,9 @@
 				if (data.type === 'theme') {
 					if (data.theme === 'dark' || data.theme === 'light') document.documentElement.dataset.theme = data.theme;
 					readRainInk();
+				} else if (data.type === 'effect' && data.name in effectPrefs) {
+					effectPrefs[data.name] = data.enabled ? 'on' : 'off';
+					syncMotion();
 				} else if (data.type === 'parallax-state') {
 					parallaxTargetX = data.x;
 					parallaxTargetY = data.y;
@@ -99,8 +102,9 @@
 
 			function tickParallax(dt) {
 				const ease = 1 - Math.pow(1 - 0.12, dt);
-				parallaxMouse.x = easeToward(parallaxMouse.x, centered ? 0 : parallaxTargetX, ease);
-				parallaxMouse.y = easeToward(parallaxMouse.y, centered ? 0 : parallaxTargetY, ease);
+				const still = centered || !effectOn('parallax');
+				parallaxMouse.x = easeToward(parallaxMouse.x, still ? 0 : parallaxTargetX, ease);
+				parallaxMouse.y = easeToward(parallaxMouse.y, still ? 0 : parallaxTargetY, ease);
 				applyParallax();
 			}
 
@@ -178,16 +182,25 @@
 				const dt = Math.min((now - lastTime) / frameMs, 3);
 				lastTime = now;
 				tickParallax(dt);
-				renderRain(dt);
+				if (effectOn('rain')) renderRain(dt);
 			}
 
 			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+			const effectPrefs = {rain: null, parallax: null};
+			try {
+				Object.keys(effectPrefs).forEach(name => { effectPrefs[name] = localStorage.getItem(name); });
+			} catch (e) {}
+
+			function effectOn(name) {
+				return effectPrefs[name] ? effectPrefs[name] === 'on' : !reducedMotion.matches;
+			}
+
 			function syncMotion() {
-				if (reducedMotion.matches) {
+				if (!effectOn('rain')) ctx.clearRect(0, 0, width, height);
+				if (!effectOn('rain') && !effectOn('parallax')) {
 					if (rafId !== null) cancelAnimationFrame(rafId);
 					rafId = null;
-					ctx.clearRect(0, 0, width, height);
 					parallaxMouse.x = 0;
 					parallaxMouse.y = 0;
 					applyParallax();
