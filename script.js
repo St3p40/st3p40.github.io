@@ -346,3 +346,78 @@ function closeAllWindows() {
 	Object.keys(openWindows).forEach(closeIframeWindow);
 	closeStartMenu();
 }
+
+function wait(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function withTimeout(promise, ms) {
+	return Promise.race([promise, wait(ms)]);
+}
+
+const BOOT_STEP_MS = 800;
+const bootScreen = document.getElementById('bootScreen');
+const bootLabel = document.getElementById('bootLabel');
+const bootFill = document.getElementById('bootFill');
+
+async function runBoot(stages) {
+	const quick = motionQuery.matches;
+	let skip;
+	const skipped = new Promise(resolve => { skip = resolve; });
+	bootScreen.addEventListener('click', skip);
+	bootScreen.addEventListener('keydown', skip);
+	await Promise.race([skipped, (async () => {
+		for (let i = 0; i < stages.length; i++) {
+			bootLabel.textContent = stages[i].label;
+			bootFill.style.width = (i / stages.length * 100) + '%';
+			await Promise.all([wait(quick ? 0 : BOOT_STEP_MS), stages[i].run()]);
+		}
+	})()]);
+	bootScreen.removeEventListener('click', skip);
+	bootScreen.removeEventListener('keydown', skip);
+	bootFill.style.width = '100%';
+	await wait(quick ? 0 : 500);
+	bootScreen.classList.remove('on');
+	bootScreen.setAttribute('aria-hidden', 'true');
+}
+
+const backgroundFrame = document.getElementById('background-frame');
+
+function backgroundReady() {
+	return withTimeout(new Promise(resolve => {
+		window.addEventListener('message', function onMessage(e) {
+			if (e.source !== backgroundFrame.contentWindow || !e.data || e.data.type !== 'background-ready') return;
+			window.removeEventListener('message', onMessage);
+			resolve();
+		});
+	}), 6000);
+}
+
+const initialBackground = backgroundReady();
+
+function reloadBackground() {
+	const ready = backgroundReady();
+	backgroundFrame.src = backgroundFrame.getAttribute('src');
+	return ready;
+}
+
+async function restart() {
+	if (bootScreen.classList.contains('on')) return;
+	closeStartMenu();
+	bootFill.style.width = '0';
+	bootScreen.classList.add('on');
+	bootScreen.setAttribute('aria-hidden', 'false');
+	bootScreen.focus();
+	await wait(motionQuery.matches ? 0 : 350);
+	await runBoot([
+		{label: 'Closing windows...', run: async () => closeAllWindows()},
+		{label: 'Loading background...', run: reloadBackground},
+		{label: 'Starting St3P40...', run: async () => {}}
+	]);
+}
+
+runBoot([
+	{label: 'Loading desktop...', run: async () => {}},
+	{label: 'Loading background...', run: () => initialBackground},
+	{label: 'Starting St3P40...', run: async () => {}}
+]);

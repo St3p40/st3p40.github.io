@@ -53,12 +53,24 @@
 					<button id="parallaxBtn" onclick="toggleEffect('parallax')"></button>
 					<div class="start-menu-divider"></div>
 					<button onclick="closeAllWindows()">Close all windows</button>
+					<button onclick="restart()">Restart</button>
 				</div>
 			</div>
 			<button class="start-btn" onclick="toggleStartMenu()">Start</button>
 			<div id="taskbarWindows" class="taskbar-windows"></div>
 			<div id="taskbarClock" class="taskbar-clock" title="Newfoundland time"></div>
 		</div>
+
+		<div id="bootScreen" class="boot-screen on" tabindex="-1" role="dialog" aria-label="Starting">
+			<div class="boot-dialog">
+				<div class="boot-title">St3P40</div>
+				<div class="boot-body">
+					<p id="bootLabel" class="boot-label" role="status">Loading desktop...</p>
+					<div class="boot-track"><div id="bootFill" class="boot-fill"></div></div>
+				</div>
+			</div>
+		</div>
+		<noscript><style>.boot-screen {display: none;}</style></noscript>
 
 		<script src="script.js"></script>
 		<script>

@@ -219,6 +219,10 @@
 
 			resizeCanvas();
 			syncMotion();
+
+			Promise.all(parallaxLayers.map(({el}) => el.decode().catch(() => {}))).then(() => {
+				window.parent.postMessage({type: 'background-ready'}, '*');
+			});
 		})();
 		</script>
 	</body>
