@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<title>St3P40</title>
+		<meta charset="utf-8">
+		<title>My Computer</title>
+		<script>
+			try {
+				const savedTheme = localStorage.getItem('theme');
+				if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.dataset.theme = savedTheme;
+			} catch (e) {}
+		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
 			:root {
 				color-scheme: light;
+				--cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2V19L6 15L9 22L12 21L9 14H15Z' fill='%23f6e3ce' stroke='%2314191d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 2, auto;
+				--cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M6 2h4v7h3V8h2v1h2v1h2v8l-2 3H7l-3-4v-5h2z' fill='%23f6e3ce' stroke='%2314191d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 8 2, pointer;
 				--surface: #e6d0a8;
 				--panel: #f6e3ce;
 				--text: #14191d;
@@ -51,34 +60,46 @@
 				--rule: rgba(230, 208, 168, 0.15);
 			}
 
-			html {background: var(--surface);}
+			html {background: var(--surface); cursor: var(--cursor-default);}
+			a, button {cursor: var(--cursor-pointer);}
 
-			body {
-				margin: 0;
-				padding: 18px;
-				box-sizing: border-box;
-				background: var(--surface);
-				color: var(--text);
-				font-family: sans-serif;
-				font-size: 14px;
-				line-height: 1.5;
-			}
+			body {margin: 0; background: var(--surface); color: var(--text); font-family: sans-serif; font-size: 14px; line-height: 1.5;}
 
+			/* Explorer: a toolbar with Back and the address, then one view at a time */
+			.toolbar {position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--panel); border-bottom: 2px inset var(--edge-dim);}
+			.back {flex: none; font-family: sans-serif; font-size: 13px; background: var(--chrome); color: var(--chrome-text); padding: 4px 12px; border: 2px outset var(--edge);}
+			.back:active {border-style: inset;}
+			.back:disabled {opacity: 0.4; cursor: var(--cursor-default);}
+			.address {flex: 1; min-width: 0; margin: 0; font-family: monospace; font-size: 13px; background: var(--surface); border: 2px inset var(--edge-dim); padding: 3px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+			.view {padding: 18px;}
+			.view[hidden] {display: none;}
+
+			.files {list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;}
+			.file {display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 8px 4px; background: none; border: 2px solid transparent; border-radius: 6px; color: var(--text); font-family: sans-serif; font-size: 13px; text-decoration: none;}
+			.file:hover, .file:focus-visible {background: var(--panel); border-color: var(--edge-dim); outline: none;}
+			.file-icon {display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; box-sizing: border-box; background: var(--panel); color: var(--text); border: 3px outset var(--edge);}
+			.file-icon svg {width: 30px; height: 30px; fill: currentColor;}
+			.file-icon img {width: 100%; height: 100%; object-fit: cover; display: block;}
+			.file-name {text-align: center; line-height: 1.25; overflow-wrap: anywhere;}
+			.status {margin: 14px 0 0 0; font-size: 12px; color: var(--text-dim);}
+
+			.empty {margin: 0; color: var(--text-dim);}
+
+			.viewer {margin: 0; text-align: center;}
+			.viewer img {display: block; max-width: 100%; max-height: 70vh; margin: 0 auto; border: 4px inset var(--edge-dim); background: var(--chrome);}
+			.viewer figcaption {margin-top: 8px; font-family: monospace; font-size: 12px; color: var(--text-dim);}
+
+			/* General info.txt */
 			.page {max-width: 620px; margin: 0 auto;}
-
 			.profile {display: flex; align-items: center; gap: 16px; margin-bottom: 14px;}
-
 			.avatar-container {border: 4px inset var(--edge-dim); background: var(--chrome); padding: 4px; flex: none;}
 			.avatar-img {display: block; width: 104px; height: 104px; object-fit: cover;}
-
 			.profile-label {font-size: 28px; margin: 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
 			.profile-role {margin: 2px 0 0 0; font-size: 15px;}
-			.profile-meta {margin: 8px 0 0 0; font-family: monospace; font-size: 12px; color: var(--text-dim);}
 
 			.panel {background: var(--panel); border: 2px inset var(--edge-dim); margin-bottom: 14px;}
-
 			.panel-title {background: var(--chrome); color: var(--chrome-text); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 6px 10px; margin: 0;}
-
 			.panel-body {padding: 12px;}
 			.panel-body p {margin: 0 0 10px 0;}
 			.panel-body p:last-child {margin-bottom: 0;}
@@ -93,20 +114,7 @@
 			.tags li {font-family: monospace; font-size: 12px; background: var(--surface); border: 2px outset var(--edge); padding: 3px 8px;}
 
 			.window-actions {display: flex; flex-wrap: wrap; gap: 10px;}
-
-			.btn {
-				font-family: sans-serif;
-				flex: 1 1 160px;
-				text-align: center;
-				background: var(--chrome);
-				color: var(--chrome-text);
-				font-size: 16px;
-				padding: 10px;
-				text-decoration: none;
-				border-radius: 6px;
-				border: 3px outset var(--edge);
-				transition: background 200ms;
-			}
+			.btn {font-family: sans-serif; flex: 1 1 160px; text-align: center; background: var(--chrome); color: var(--chrome-text); font-size: 16px; padding: 10px; text-decoration: none; border-radius: 6px; border: 3px outset var(--edge); transition: background 200ms;}
 			.btn:hover {background: var(--muted); color: var(--on-muted); border: 3px inset var(--edge);}
 
 			@media (max-width: 420px) {
@@ -119,62 +127,207 @@
 		</style>
 	</head>
 	<body>
-		<div class="page">
-			<div class="profile">
-				<div class="avatar-container">
-					<img src="portrait.png" alt="St3P40 avatar" class="avatar-img">
-				</div>
-				<div>
-					<h1 class="profile-label">St3P40</h1>
-					<p class="profile-role">Developer</p>
-					<!-- <p class="profile-meta"></p> -->
-				</div>
-			</div>
-
-			<div class="panel">
-				<h2 class="panel-title">About</h2>
-				<div class="panel-body">
-					<p>Most of what I write is C and C++ for microcontrollers, Linux</p>
-					<p>Now I'm also exploring web development</p>
-				</div>
-			</div>
-
-			<div class="panel">
-				<h2 class="panel-title">Things I've built</h2>
-				<div class="panel-body" style="padding: 0;">
-										<a class="link-row" href="https://github.com/st3p40/EmbButton" target="_blank" rel="noopener">
-						<span class="link-name">EmbButton</span>
-						<span class="link-desc">Header-only button handling for embedded devices</span>
-					</a>
-					<a class="link-row" href="https://st3p40.win/BitmapArrayFile/" target="_blank" rel="noopener">
-						<span class="link-name">BitmapArray Tools</span>
-						<span class="link-desc">Browser tool for image -> bitmap array conversion</span>
-					</a>
-				</div>
-			</div>
-
-			<div class="panel">
-				<h2 class="panel-title">Toolbox</h2>
-				<div class="panel-body">
-					<ul class="tags">
-						<li>C</li>
-						<li>C++</li>
-						<li>Linux</li>
-						<li>Embedded</li>
-						<li>Arduino</li>
-						<li>ESP32</li>
-						<li>STM32</li>
-						<li>Python</li>
-						<li>HTML/CSS/JS</li>
-					</ul>
-				</div>
-			</div>
-
-			<div class="window-actions">
-				<a class="btn" href="https://github.com/st3p40" target="_blank" rel="noopener">GitHub</a>
-			</div>
+		<div class="toolbar">
+			<button id="back" class="back" type="button" disabled>&larr; Back</button>
+			<p id="address" class="address">/home/St3P40/</p>
 		</div>
+
+		<!-- My Computer: the top folder -->
+		<section class="view" data-view="home">
+			<ul class="files">
+				<li><button class="file" type="button" data-open="general">
+					<span class="file-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5 2h9l5 5v15H5zM7 4v16h10V8h-4V4zM9 11h6v1.5H9zM9 14h6v1.5H9zM9 17h4v1.5H9z"/></svg></span>
+					<span class="file-name">General info.txt</span>
+				</button></li>
+				<li><button class="file" type="button" data-open="setup">
+					<span class="file-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5 2h9l5 5v15H5zM7 4v16h10V8h-4V4zM9 11h6v1.5H9zM9 14h6v1.5H9zM9 17h4v1.5H9z"/></svg></span>
+					<span class="file-name">My setup.txt</span>
+				</button></li>
+				<li><button class="file" type="button" data-open="projects">
+					<span class="file-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7l2 2h11v13H2z"/></svg></span>
+					<span class="file-name">Projects</span>
+				</button></li>
+				<li><button class="file" type="button" data-open="gallery">
+					<span class="file-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7l2 2h11v13H2z"/></svg></span>
+					<span class="file-name">Gallery</span>
+				</button></li>
+			</ul>
+			<p class="status">4 objects</p>
+		</section>
+
+		<!-- General info.txt -->
+		<section class="view" data-view="general" hidden>
+			<div class="page">
+				<div class="profile">
+					<div class="avatar-container">
+						<img src="gallery/portrait.png" alt="St3P40 avatar" class="avatar-img">
+					</div>
+					<div>
+						<h1 class="profile-label">St3P40</h1>
+						<p class="profile-role">Developer</p>
+					</div>
+				</div>
+
+				<div class="panel">
+					<h2 class="panel-title">About</h2>
+					<div class="panel-body">
+						<p>Most of what I write is C and C++ for microcontrollers, Linux</p>
+						<p>Now I'm also exploring web development</p>
+					</div>
+				</div>
+
+				<div class="panel">
+					<h2 class="panel-title">Toolbox</h2>
+					<div class="panel-body">
+						<ul class="tags">
+							<li>C</li>
+							<li>C++</li>
+							<li>Linux</li>
+							<li>Embedded</li>
+							<li>Arduino</li>
+							<li>ESP32</li>
+							<li>STM32</li>
+							<li>Python</li>
+							<li>HTML/CSS/JS</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="window-actions">
+					<a class="btn" href="https://github.com/st3p40" target="_blank" rel="noopener">GitHub</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- My setup.txt: replace the empty line with panels like the ones in General info, e.g.
+			<div class="panel"><h2 class="panel-title">PC</h2><div class="panel-body"><p>...</p></div></div> -->
+		<section class="view" data-view="setup" hidden>
+			<div class="page">
+				<p class="empty">This file is empty for now.</p>
+			</div>
+		</section>
+
+		<!-- Projects: apps open as their own window on the desktop; data-link ones open in a new tab -->
+		<section class="view" data-view="projects" hidden>
+			<ul class="files">
+				<li><button class="file" type="button" data-app="https://st3p40.win/BitmapArrayFile/" data-title="BitmapArray Tools">
+					<span class="file-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h6v6H3zM15 3h6v6h-6zM9 9h6v6H9zM3 15h6v6H3zM15 15h6v6h-6z"/></svg></span>
+					<span class="file-name">BitmapArray Tools</span>
+				</button></li>
+				<li><button class="file" type="button" data-app="https://st3p40.win/Works-from-Soulmatelights/" data-title="LED Matrix demos">
+					<span class="file-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="12" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="12" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/></svg></span>
+					<span class="file-name">LED Matrix demos</span>
+				</button></li>
+				<li><a class="file" href="https://github.com/st3p40/EmbButton" target="_blank" rel="noopener">
+					<span class="file-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14zM5 5h6v2H5v12h12v-6h2v8H3V5z"/></svg></span>
+					<span class="file-name">EmbButton (GitHub)</span>
+				</a></li>
+			</ul>
+			<p class="status">3 objects</p>
+		</section>
+
+		<!-- Gallery: filled from GALLERY in the script below -->
+		<section class="view" data-view="gallery" hidden>
+			<ul class="files" id="galleryFiles"></ul>
+			<p class="status" id="galleryStatus"></p>
+		</section>
+
+		<section class="view" data-view="image" hidden>
+			<figure class="viewer">
+				<img id="viewerImg" src="" alt="">
+				<figcaption id="viewerName"></figcaption>
+			</figure>
+		</section>
+
 		<script>
+			// Add pictures here: put the file in src/gallery/ and list it with a short description
+			const GALLERY_DIR = 'gallery/';
+			const GALLERY = [
+				{file: 'portrait.png', alt: 'St3P40 avatar'},
+				{file: 'Teevee.png', alt: 'Painting of a TV-headed figure in a purple coat sitting on a desk next to a computer'}
+			];
+
+			const ROOT = '\\home\\St3P40\\';
+			const VIEWS = {
+				home: {path: '', parent: null},
+				general: {path: 'General info.txt', parent: 'home'},
+				setup: {path: 'My setup.txt', parent: 'home'},
+				projects: {path: 'Projects\\', parent: 'home'},
+				gallery: {path: 'Gallery\\', parent: 'home'},
+				image: {path: 'Gallery\\', parent: 'gallery'}
+			};
+
+			const backBtn = document.getElementById('back');
+			const address = document.getElementById('address');
+			let current = 'home';
+
+			function show(name, file) {
+				current = name;
+				document.querySelectorAll('.view').forEach(view => { view.hidden = view.dataset.view !== name; });
+				address.textContent = ROOT + VIEWS[name].path + (file || '');
+				backBtn.disabled = !VIEWS[name].parent;
+				window.scrollTo(0, 0);
+			}
+
+			function openImage(item) {
+				const img = document.getElementById('viewerImg');
+				img.src = GALLERY_DIR + encodeURI(item.file);
+				img.alt = item.alt;
+				document.getElementById('viewerName').textContent = item.file;
+				show('image', item.file);
+			}
+
+			const galleryFiles = document.getElementById('galleryFiles');
+			GALLERY.forEach(item => {
+				const li = document.createElement('li');
+				const btn = document.createElement('button');
+				btn.className = 'file';
+				btn.type = 'button';
+				const icon = document.createElement('span');
+				icon.className = 'file-icon';
+				const thumb = document.createElement('img');
+				thumb.src = GALLERY_DIR + encodeURI(item.file);
+				thumb.alt = '';
+				thumb.loading = 'lazy';
+				icon.append(thumb);
+				const label = document.createElement('span');
+				label.className = 'file-name';
+				label.textContent = item.file;
+				btn.append(icon, label);
+				btn.addEventListener('click', () => openImage(item));
+				li.append(btn);
+				galleryFiles.append(li);
+			});
+			document.getElementById('galleryStatus').textContent = GALLERY.length + (GALLERY.length === 1 ? ' object' : ' objects');
+
+			document.querySelectorAll('[data-open]').forEach(btn => {
+				btn.addEventListener('click', () => show(btn.dataset.open));
+			});
+
+			// Apps open as a window on the desktop; outside the site they open in a new tab
+			document.querySelectorAll('[data-app]').forEach(btn => {
+				btn.addEventListener('click', () => {
+					if (window.parent !== window) {
+						window.parent.postMessage({type: 'open-window', title: btn.dataset.title, url: btn.dataset.app}, location.origin === 'null' ? '*' : location.origin);
+					} else {
+						window.open(btn.dataset.app, '_blank', 'noopener');
+					}
+				});
+			});
+
+			// ?view=projects opens straight into a folder, used by the Projects icon on the desktop
+			const startView = new URLSearchParams(location.search).get('view');
+			if (Object.hasOwn(VIEWS, startView) && startView !== 'image') show(startView);
+			backBtn.addEventListener('click', () => {
+				if (VIEWS[current].parent) show(VIEWS[current].parent);
+			});
+			document.addEventListener('keydown', e => {
+				if (e.key === 'Backspace' && VIEWS[current].parent) {
+					e.preventDefault();
+					show(VIEWS[current].parent);
+				}
+			});
+
 			window.addEventListener('message', function(e) {
 				if (!e.data || e.data.type !== 'theme') return;
 				if (e.data.theme === 'dark' || e.data.theme === 'light') document.documentElement.dataset.theme = e.data.theme;

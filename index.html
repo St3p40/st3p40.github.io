@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
+		<meta charset="utf-8">
 		<title>St3p40</title>
 		<meta name="description" content="Personal website or smth">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -19,17 +20,13 @@
 			<iframe id="background-frame" class="background-frame" src="src/background.html" aria-hidden="true" tabindex="-1"></iframe>
 
 			<nav class="desktop-icons" aria-label="Desktop">
-				<button class="desktop-icon" data-title="St3P40" data-url="src/about.html">
-					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg></span>
-					<span class="desktop-icon-label">About Me</span>
+				<button class="desktop-icon" data-title="My Computer" data-url="src/about.html">
+					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M2 4h20v12H2zM4 6v8h16V6zM10 16h4v2h-4zM7 18h10v2H7z"/></svg></span>
+					<span class="desktop-icon-label">My Computer</span>
 				</button>
-				<button class="desktop-icon" data-title="BitmapArray Tools" data-url="https://st3p40.win/BitmapArrayFile/">
-					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h6v6H3zM15 3h6v6h-6zM9 9h6v6H9zM3 15h6v6H3zM15 15h6v6h-6z"/></svg></span>
-					<span class="desktop-icon-label">BitmapArray Tools</span>
-				</button>
-				<button class="desktop-icon" data-title="LED Matrix demos" data-url="https://st3p40.win/Works-from-Soulmatelights/">
-					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="12" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="12" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/></svg></span>
-					<span class="desktop-icon-label">LED Matrix demos</span>
+				<button class="desktop-icon" data-title="Projects" data-url="src/about.html?view=projects">
+					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7l2 2h11v13H2z"/></svg></span>
+					<span class="desktop-icon-label">Projects</span>
 				</button>
 				<a class="desktop-icon" href="https://github.com/st3p40" target="_blank" rel="noopener">
 					<span class="desktop-icon-tile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14zM5 5h6v2H5v12h12v-6h2v8H3V5z"/></svg></span>
@@ -56,7 +53,7 @@
 					<button onclick="restart()">Restart</button>
 				</div>
 			</div>
-			<button class="start-btn" onclick="toggleStartMenu()">Start</button>
+			<button class="start-btn" onclick="toggleStartMenu()" aria-expanded="false" aria-controls="startMenu">Start</button>
 			<div id="taskbarWindows" class="taskbar-windows"></div>
 			<div id="taskbarClock" class="taskbar-clock" title="Newfoundland time"></div>
 		</div>

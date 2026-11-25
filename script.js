@@ -8,16 +8,51 @@ function setActiveWindow(url) {
 	Object.entries(taskbarButtons).forEach(([u, btn]) => btn.classList.toggle('active', u === url));
 }
 
+function raiseWindow(win) {
+	win.style.zIndex = ++zTop;
+	if (win.dataset.url) setActiveWindow(win.dataset.url);
+}
+
+const startMenu = document.getElementById('startMenu');
+const startBtn = document.querySelector('.start-btn');
+
+function setStartMenu(open) {
+	startMenu.classList.toggle('open', open);
+	startBtn.setAttribute('aria-expanded', open);
+}
 function toggleStartMenu() {
-	document.getElementById('startMenu').classList.toggle('open');
+	setStartMenu(!startMenu.classList.contains('open'));
+}
+function closeStartMenu() {
+	setStartMenu(false);
 }
 document.addEventListener('click', function(e) {
-	const menu = document.getElementById('startMenu');
-	const btn = document.querySelector('.start-btn');
-	if (!menu.contains(e.target) && e.target !== btn) {
-		menu.classList.remove('open');
+	if (!startMenu.contains(e.target) && e.target !== startBtn) closeStartMenu();
+});
+document.addEventListener('keydown', function(e) {
+	if (e.key === 'Escape' && startMenu.classList.contains('open')) {
+		closeStartMenu();
+		startBtn.focus();
 	}
 });
+
+let focusedFrame = null;
+function trackFrameFocus() {
+	const active = document.activeElement;
+	const frame = active && active.tagName === 'IFRAME' && active.closest('.window') ? active : null;
+	if (frame === focusedFrame) return;
+	focusedFrame = frame;
+	if (frame) {
+		raiseWindow(frame.closest('.window'));
+		closeStartMenu();
+	}
+}
+function releaseFrameFocus() {
+	if (document.activeElement && document.activeElement.tagName === 'IFRAME') document.activeElement.blur();
+	focusedFrame = null;
+}
+window.addEventListener('blur', () => setTimeout(trackFrameFocus, 0));
+setInterval(trackFrameFocus, 250);
 
 document.querySelectorAll('.desktop-icon[data-url]').forEach(icon => {
 	icon.addEventListener('click', () => openIframeWindow(icon.dataset.title, icon.dataset.url));
@@ -38,8 +73,8 @@ function makeDraggable(windowElement) {
 	function dragStart(e) {
 		if (e.target.closest('.close-btn')) return;
 		e.preventDefault();
-		windowElement.style.zIndex = ++zTop;
-		if (windowElement.dataset.url) setActiveWindow(windowElement.dataset.url);
+		releaseFrameFocus();
+		raiseWindow(windowElement);
 		const p = eventPoint(e);
 		pos3 = p.x;
 		pos4 = p.y;
@@ -97,8 +132,8 @@ function makeResizable(windowElement) {
 	function resizeStart(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		windowElement.style.zIndex = ++zTop;
-		if (windowElement.dataset.url) setActiveWindow(windowElement.dataset.url);
+		releaseFrameFocus();
+		raiseWindow(windowElement);
 		const p = eventPoint(e);
 		startX = p.x;
 		startY = p.y;
@@ -152,8 +187,7 @@ function makeResizable(windowElement) {
 function openIframeWindow(title, url) {
 	if (openWindows[url]) {
 		openWindows[url].style.display = 'flex';
-		openWindows[url].style.zIndex = ++zTop;
-		setActiveWindow(url);
+		raiseWindow(openWindows[url]);
 		return;
 	}
 	const offset = Object.keys(openWindows).length % 5;
@@ -179,6 +213,7 @@ function openIframeWindow(title, url) {
 	const closeBtn = document.createElement('button');
 	closeBtn.className = 'close-btn';
 	closeBtn.textContent = 'X';
+	closeBtn.setAttribute('aria-label', 'Close ' + title);
 	closeBtn.addEventListener('click', () => closeIframeWindow(url));
 
 	header.append(titleSpan, closeBtn);
@@ -187,6 +222,7 @@ function openIframeWindow(title, url) {
 	body.className = 'window-body';
 	const iframe = document.createElement('iframe');
 	iframe.src = url;
+	iframe.title = title;
 	body.append(iframe);
 
 	win.append(header, body);
@@ -214,8 +250,7 @@ function toggleTaskbarWindow(url) {
 		setActiveWindow(null);
 	} else {
 		win.style.display = 'flex';
-		win.style.zIndex = ++zTop;
-		setActiveWindow(url);
+		raiseWindow(win);
 	}
 }
 
@@ -233,6 +268,12 @@ function closeIframeWindow(url) {
 		document.dispatchEvent(new Event('iframehoverchange'));
 	}
 }
+
+window.addEventListener('message', function(e) {
+	if (e.origin !== location.origin || !e.data || e.data.type !== 'open-window') return;
+	if (typeof e.data.title !== 'string' || typeof e.data.url !== 'string') return;
+	openIframeWindow(e.data.title, e.data.url);
+});
 
 const hoveredIframes = new Set();
 function watchIframeHover(iframe) {
@@ -338,10 +379,6 @@ function toggleEffect(name) {
 
 updateEffectButtons();
 
-function closeStartMenu() {
-	document.getElementById('startMenu').classList.remove('open');
-}
-
 function closeAllWindows() {
 	Object.keys(openWindows).forEach(closeIframeWindow);
 	closeStartMenu();
@@ -365,7 +402,7 @@ async function runBoot(stages) {
 	let skip;
 	const skipped = new Promise(resolve => { skip = resolve; });
 	bootScreen.addEventListener('click', skip);
-	bootScreen.addEventListener('keydown', skip);
+	document.addEventListener('keydown', skip);
 	await Promise.race([skipped, (async () => {
 		for (let i = 0; i < stages.length; i++) {
 			bootLabel.textContent = stages[i].label;
@@ -374,7 +411,7 @@ async function runBoot(stages) {
 		}
 	})()]);
 	bootScreen.removeEventListener('click', skip);
-	bootScreen.removeEventListener('keydown', skip);
+	document.removeEventListener('keydown', skip);
 	bootFill.style.width = '100%';
 	await wait(quick ? 0 : 500);
 	bootScreen.classList.remove('on');
@@ -405,6 +442,7 @@ async function restart() {
 	if (bootScreen.classList.contains('on')) return;
 	closeStartMenu();
 	bootFill.style.width = '0';
+	bootLabel.textContent = 'Restarting...';
 	bootScreen.classList.add('on');
 	bootScreen.setAttribute('aria-hidden', 'false');
 	bootScreen.focus();
@@ -412,12 +450,12 @@ async function restart() {
 	await runBoot([
 		{label: 'Closing windows...', run: async () => closeAllWindows()},
 		{label: 'Loading background...', run: reloadBackground},
-		{label: 'Starting St3P40...', run: async () => {}}
+		{label: 'Starting website...', run: async () => {}}
 	]);
 }
 
 runBoot([
 	{label: 'Loading desktop...', run: async () => {}},
 	{label: 'Loading background...', run: () => initialBackground},
-	{label: 'Starting St3P40...', run: async () => {}}
+	{label: 'Starting website...', run: async () => {}}
 ]);

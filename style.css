@@ -1,5 +1,7 @@
 :root {
     color-scheme: light;
+    --cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M2 2V19L6 15L9 22L12 21L9 14H15Z' fill='%23f6e3ce' stroke='%2314191d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 2, auto;
+    --cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M6 2h4v7h3V8h2v1h2v1h2v8l-2 3H7l-3-4v-5h2z' fill='%23f6e3ce' stroke='%2314191d' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 8 2, pointer;
     --surface: #e6d0a8;
     --text: #14191d;
     --chrome: #14191d;
@@ -39,9 +41,8 @@
     --on-muted: #14191d;
 }
 
-html {
-touch-action: pan-x pan-y;
-}
+html {cursor: var(--cursor-default); touch-action: pan-x pan-y;}
+a, button {cursor: var(--cursor-pointer);}
 
 body {
 touch-action: pan-x pan-y;
@@ -60,7 +61,7 @@ background-color: var(--muted);
 
 .desktop-icons {position: absolute; top: 20px; left: 20px; bottom: 60px; display: flex; flex-direction: column; flex-wrap: wrap; align-content: flex-start; gap: 12px; z-index: 1;}
 
-.desktop-icon {display: flex; flex-direction: column; align-items: center; gap: 6px; box-sizing: border-box; width: 104px; padding: 6px 4px; background: none; border: 2px solid transparent; border-radius: 6px; font-family: sans-serif; color: var(--chrome-text); text-decoration: none; cursor: pointer; user-select: none; -webkit-user-select: none;}
+.desktop-icon {display: flex; flex-direction: column; align-items: center; gap: 6px; box-sizing: border-box; width: 104px; padding: 6px 4px; background: none; border: 2px solid transparent; border-radius: 6px; font-family: sans-serif; color: var(--chrome-text); text-decoration: none; cursor: var(--cursor-pointer); user-select: none; -webkit-user-select: none;}
 .desktop-icon:hover, .desktop-icon:focus-visible {background: rgba(0, 0, 0, 0.25); border-color: var(--edge); outline: none;}
 
 .desktop-icon-tile {display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: var(--surface); color: var(--text); border: 3px outset var(--edge); box-sizing: border-box; box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.35);}
@@ -83,7 +84,7 @@ background-color: var(--muted);
     .boot-screen, .boot-screen.on, .boot-fill {transition: none;}
 }
 
-.window {display: none; position: absolute; top: 10%;left: 10%; background-color: var(--surface); color: var(--text); border-radius: 10px; border: 4px outset var(--edge); width: min(380px, 92vw); min-width: 260px; min-height: 200px; z-index: 10; box-shadow: 4px 4px 10px rgba(0,0,0,0.4); flex-direction: column;}
+.window {display: none; box-sizing: border-box; position: absolute; top: 10%;left: 10%; background-color: var(--surface); color: var(--text); border-radius: 10px; border: 4px outset var(--edge); width: min(380px, 92vw); min-width: 260px; min-height: 200px; z-index: 10; box-shadow: 4px 4px 10px rgba(0,0,0,0.4); flex-direction: column;}
 
 .resize-handle {position: absolute; right: 2px; bottom: 2px; width: 9px; height: 9px; cursor: nwse-resize; background: repeating-linear-gradient(135deg, var(--text) 0 1.5px, transparent 1.5px 3px); z-index: 2; touch-action: none;}
 
@@ -94,33 +95,33 @@ background-color: var(--muted);
 .window-header {background-color: var(--chrome); color: var(--chrome-text); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; cursor: grab; touch-action: none;}
 .window-header:active {cursor: grabbing;}
 
-.close-btn {background: var(--muted); color: var(--on-muted); border: 2px outset var(--edge); cursor: pointer; font-weight: bold;}
+.close-btn {background: var(--muted); color: var(--on-muted); border: 2px outset var(--edge); cursor: var(--cursor-pointer); font-weight: bold;}
 
 .window-body {background: var(--surface); color: var(--text); border-radius: 5px; border: 1px inset var(--edge-dim); padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; overflow: auto;}
 
 .taskbar {position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background-color: var(--surface); border: 4px outset var(--edge); border-bottom: none; display: flex; align-items: center; padding: 0 10px; box-sizing: border-box; z-index: 100;}
 
-.start-btn {background: var(--chrome); color: var(--chrome-text); font-size: 16px; font-weight: bold; padding: 6px 16px; border: 3px outset var(--edge); cursor: pointer; transition: background 120ms ease;}
+.start-btn {background: var(--chrome); color: var(--chrome-text); font-size: 16px; font-weight: bold; padding: 6px 16px; border: 3px outset var(--edge); cursor: var(--cursor-pointer); transition: background 120ms ease;}
 .start-btn:hover {background: var(--chrome-hover);}
 .start-btn:active {border: 3px inset var(--edge);}
 
 .taskbar-windows {display: flex; flex: 1; gap: 6px; margin-left: 10px; overflow-x: auto; min-width: 0;}
 
-.taskbar-window-btn {background: var(--chrome); color: var(--chrome-text); font-family: sans-serif; font-size: 14px; padding: 6px 12px; border: 2px outset var(--edge); cursor: pointer; white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; flex: none; transition: background 120ms ease;}
+.taskbar-window-btn {background: var(--chrome); color: var(--chrome-text); font-family: sans-serif; font-size: 14px; padding: 6px 12px; border: 2px outset var(--edge); cursor: var(--cursor-pointer); white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; flex: none; transition: background 120ms ease;}
 .taskbar-window-btn:hover {background: var(--chrome-hover);}
 .taskbar-window-btn.active {background: var(--muted); color: var(--on-muted); border: 2px inset var(--edge);}
 
 
 .taskbar-clock {margin-left: 8px; background: var(--chrome); color: var(--chrome-text); font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 6px 14px; border: 2px inset var(--edge); border-radius: 4px;}
 
-.start-menu {display: flex; flex-direction: column; position: absolute; bottom: 48px;left: 10px; width: 220px; background: var(--surface); border: 4px outset var(--edge); border-radius: 8px; box-shadow: 4px 4px 10px rgba(0,0,0,0.4); overflow: hidden; z-index: 101; opacity: 0;transform: translateY(10px);pointer-events: none; transition: opacity 150ms ease, transform 150ms ease;}
-.start-menu.open {opacity: 1; transform: translateY(0); pointer-events: auto;}
+.start-menu {display: flex; flex-direction: column; position: absolute; bottom: 48px;left: 10px; width: 220px; background: var(--surface); border: 4px outset var(--edge); border-radius: 8px; box-shadow: 4px 4px 10px rgba(0,0,0,0.4); overflow: hidden; z-index: 101; opacity: 0;transform: translateY(10px);pointer-events: none; visibility: hidden; transition: opacity 150ms ease, transform 150ms ease, visibility 0s 150ms;}
+.start-menu.open {opacity: 1; transform: translateY(0); pointer-events: auto; visibility: visible; transition: opacity 150ms ease, transform 150ms ease;}
 
 .start-menu-header {background: var(--chrome); color: var(--chrome-text); font-weight: bold; font-size: 14px; padding: 8px 12px; letter-spacing: 1px; text-transform: uppercase;}
 
 .start-menu-items {display: flex; flex-direction: column; padding: 6px;}
 
-.start-menu button, .start-menu a {display: block; font-family: sans-serif; text-align: left; background: var(--surface); color: var(--text); font-size: 14px; padding: 8px 10px; margin-bottom: 2px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer; transition: background 120ms ease, color 120ms ease;}
+.start-menu button, .start-menu a {display: block; font-family: sans-serif; text-align: left; background: var(--surface); color: var(--text); font-size: 14px; padding: 8px 10px; margin-bottom: 2px; border: none; border-radius: 4px; text-decoration: none; cursor: var(--cursor-pointer); transition: background 120ms ease, color 120ms ease;}
 .start-menu button:last-child, .start-menu a:last-child {margin-bottom: 0;}
 .start-menu button:hover, .start-menu a:hover {background: var(--chrome); color: var(--chrome-text);}
 
